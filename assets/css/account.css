@@ -1,0 +1,6223 @@
+/**
+ * CoachTribe Mijn account — donker thema (ct-account-*).
+ */
+
+/* -------------------------------------------------------------------------
+   Basis & box model
+   ------------------------------------------------------------------------- */
+.ct-account,
+.ct-account *,
+.ct-account *::before,
+.ct-account *::after {
+	box-sizing: border-box;
+}
+
+.ct-account {
+	--ct-bg-page: #000000;
+	--ct-bg-sidebar: #111111;
+	--ct-bg-card: #1a1a1a;
+	--ct-bg-card-hover: #242424;
+	--ct-bg-input: #111111;
+	--ct-color-text: #ffffff;
+	--ct-color-text-muted: #aaaaaa;
+	--ct-color-accent: rgb(255, 77, 109);
+	--ct-color-accent-soft: #ff5a7a;
+	--ct-color-border: #2a2a2a;
+	--ct-color-border-strong: #333333;
+	--ct-shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45);
+	--ct-shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.55);
+	--ct-color-pro-highlight: #c4b5fd;
+	--ct-snella-icon-ring: #8b1d2c;
+	--ct-snella-icon-ring-hover: #a02435;
+
+	display: flex;
+	width: 100%;
+	max-width: none;
+	min-width: 0;
+	margin: 0;
+	min-height: 100vh;
+	font-family:
+		"Segoe UI",
+		-apple-system,
+		BlinkMacSystemFont,
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		sans-serif;
+	font-size: 1rem;
+	line-height: 1.55;
+	font-weight: 400;
+	color: var(--ct-color-text);
+	background-color: var(--ct-bg-page);
+}
+
+.ct-account p,
+.ct-account li,
+.ct-account dd,
+.ct-account dt {
+	font-size: 1rem;
+	line-height: 1.55;
+}
+
+/* -------------------------------------------------------------------------
+   Zijbalk
+   ------------------------------------------------------------------------- */
+.ct-account-sidebar {
+	flex: 0 0 260px;
+	width: 260px;
+	max-width: 260px;
+	min-height: 100vh;
+	padding: 0;
+	background-color: var(--ct-bg-sidebar);
+	border-right: 1px solid #222222;
+	display: flex;
+	flex-direction: column;
+}
+
+.ct-account-sidebar__hulp-slot {
+	margin-top: auto;
+	padding: 1rem 0.85rem 1.25rem;
+	flex-shrink: 0;
+	width: 100%;
+}
+
+.ct-account-sidebar .ct-account-hulp-card {
+	width: 100%;
+	max-width: 100%;
+	padding: 1.1rem 1rem;
+	background-color: #1c1c1c;
+	border-radius: 12px;
+}
+
+.ct-account-sidebar .ct-account-hulp-card__title {
+	font-size: 1rem;
+}
+
+.ct-account-sidebar .ct-account-hulp-card__intro {
+	font-size: 0.8125rem;
+}
+
+.ct-account-sidebar__brand-row {
+	padding: 0 1.25rem 1.5rem;
+	border-bottom: 1px solid #222222;
+}
+
+.ct-account-sidebar__brand-row--no-logo {
+	display: none;
+	padding: 0;
+	border-bottom: none;
+}
+
+.ct-account-sidebar__brand {
+	padding: 0;
+	border-bottom: none;
+}
+
+.ct-account-mobile-menu-toggle {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	flex-shrink: 0;
+	position: relative;
+	min-width: 48px;
+	min-height: 48px;
+	padding: 0.5rem 0.65rem;
+	margin: 0;
+	font-family: inherit;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #ffffff;
+	background-color: var(--ct-bg-card);
+	border: 2px solid var(--ct-color-border-strong);
+	border-radius: 10px;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.ct-account-mobile-menu-toggle:hover,
+.ct-account-mobile-menu-toggle:focus {
+	background-color: var(--ct-bg-card-hover);
+	border-color: var(--ct-color-accent);
+	outline: none;
+}
+
+.ct-account-mobile-menu-toggle__label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.ct-account-mobile-menu-toggle__bars {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+	width: 22px;
+	height: 18px;
+}
+
+.ct-account-mobile-menu-toggle__bar {
+	display: block;
+	height: 2px;
+	width: 100%;
+	background-color: #ffffff;
+	border-radius: 1px;
+	transition:
+		transform 0.25s ease,
+		opacity 0.2s ease;
+}
+
+.ct-account-sidebar.is-menu-open .ct-account-mobile-menu-toggle__bar:nth-child(1) {
+	transform: translateY(7px) rotate(45deg);
+}
+
+.ct-account-sidebar.is-menu-open .ct-account-mobile-menu-toggle__bar:nth-child(2) {
+	opacity: 0;
+}
+
+.ct-account-sidebar.is-menu-open .ct-account-mobile-menu-toggle__bar:nth-child(3) {
+	transform: translateY(-7px) rotate(-45deg);
+}
+
+.ct-account-sidebar__nav-drawer {
+	display: contents;
+}
+
+.ct-account-sidebar__logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	text-decoration: none;
+	color: inherit;
+	flex-shrink: 0;
+	min-width: 0;
+}
+
+.ct-account-sidebar__logo:hover,
+.ct-account-sidebar__logo:focus {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ct-account-sidebar__logo-img {
+	display: block;
+	max-width: 100%;
+	width: auto;
+	height: auto;
+	max-height: 42px;
+	object-fit: contain;
+	object-position: left center;
+}
+
+.ct-account-sidebar__logo-mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-sidebar__logo-mark-svg {
+	display: block;
+	width: 1.75rem;
+	height: 1.75rem;
+}
+
+.ct-account-sidebar__logo-text {
+	font-size: 1.0625rem;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: 0.06em;
+	color: #e8e8e8;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.ct-account-sidebar__nav {
+	padding: 1rem 0.65rem 0;
+}
+
+.ct-account-sidebar__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ct-account-sidebar__item {
+	margin: 0;
+	border-top: none;
+	border-bottom: none;
+}
+
+.ct-account-sidebar__link {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.875rem 1.25rem;
+	color: #ffffff;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-left: 3px solid transparent;
+	border-bottom: none !important;
+	background-color: transparent;
+	box-shadow: none !important;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-sidebar__link:hover,
+.ct-account-sidebar__link:focus {
+	background-color: #1f1f1f;
+	color: #ffffff;
+	outline: none;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+.ct-account-sidebar__link.is-active {
+	border-left-color: transparent;
+	border-radius: 10px;
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-account-sidebar__link.is-active:hover,
+.ct-account-sidebar__link.is-active:focus {
+	background-color: var(--ct-color-accent-soft);
+	border-left-color: transparent;
+	color: #ffffff;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+.ct-account-sidebar__link--logout:hover,
+.ct-account-sidebar__link--logout:focus {
+	color: var(--ct-color-accent);
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+.ct-account-sidebar__icon.dashicons {
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	font-size: 20px;
+	line-height: 22px;
+	color: var(--ct-color-text-muted);
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+.ct-account-sidebar__icon.dashicons::before {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+.ct-account-sidebar__link.is-active .ct-account-sidebar__icon.dashicons,
+.ct-account-sidebar__link:hover .ct-account-sidebar__icon.dashicons,
+.ct-account-sidebar__link:focus .ct-account-sidebar__icon.dashicons {
+	color: #ffffff;
+}
+
+.ct-account-sidebar__label {
+	font-size: 0.9375rem;
+	font-weight: 600;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   Hoofdgebied
+   ------------------------------------------------------------------------- */
+.ct-account-main {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--ct-bg-page);
+}
+
+.ct-account-main__notices {
+	padding: 1rem 2rem 0;
+}
+
+.ct-account-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1.25rem;
+	padding: 1.5rem 2rem 1.25rem;
+	border-bottom: 1px solid #222222;
+}
+
+.ct-account-header__titles {
+	min-width: 0;
+}
+
+.ct-account-header__title {
+	margin: 0 0 0.35rem;
+	font-size: 1.875rem;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: var(--ct-color-text);
+}
+
+.ct-account-header__subtitle {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--ct-color-text-muted);
+	max-width: 36rem;
+}
+
+.ct-account-header__meta {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-shrink: 0;
+}
+
+.ct-account-header__bell {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #333333;
+	border-radius: 50%;
+	background-color: #1a1a1a;
+	color: #ffffff;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.ct-account-header__bell:hover,
+.ct-account-header__bell:focus {
+	background-color: #222222;
+	border-color: rgb(255, 77, 109);
+	outline: none;
+}
+
+.ct-account-header__bell-icon.dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 18px;
+	line-height: 20px;
+}
+
+.ct-account-header__greeting {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.ct-account-header__avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #000000;
+	background-color: rgb(255, 77, 109);
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.ct-account-header__avatar-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+.ct-account-header__avatar-initial {
+	line-height: 1;
+}
+
+.ct-account-body {
+	flex: 1 1 auto;
+	padding: 1.5rem 2rem 2.5rem;
+}
+
+.ct-account-body__tab-area {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	width: 100%;
+	min-width: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Tabbladen (SPA + AJAX) en mobiel menu
+   ------------------------------------------------------------------------- */
+.ct-account-sidebar__mobile-tabs {
+	display: none;
+}
+
+.ct-account-sidebar__mobile-tabs-label {
+	display: block;
+	margin-bottom: 0.4rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-tab-select {
+	width: 100%;
+	min-height: 48px;
+	padding: 0.65rem 0.85rem;
+	font-family: inherit;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--ct-color-text);
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.ct-account-tab-select:hover,
+.ct-account-tab-select:focus {
+	border-color: var(--ct-color-accent);
+	outline: none;
+	background-color: var(--ct-bg-card-hover);
+}
+
+.ct-account-tab-panels {
+	position: relative;
+	width: 100%;
+	min-height: 12rem;
+}
+
+.ct-account-tab-panels.is-ct-tab-loading {
+	opacity: 0.65;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
+}
+
+.ct-account-tab-content {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	width: 100%;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition:
+		opacity 0.28s ease,
+		visibility 0.28s ease;
+}
+
+.ct-account-tab-content.is-active {
+	position: relative;
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.ct-account-sidebar__link.ct-account-tab {
+	min-height: 48px;
+}
+
+/* -------------------------------------------------------------------------
+   Overzicht & kaarten
+   ------------------------------------------------------------------------- */
+.ct-account-overzicht {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	align-items: stretch;
+	width: 100%;
+}
+
+.ct-account-overzicht__main {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	min-width: 0;
+	width: 100%;
+}
+
+.ct-account-card {
+	padding: 1.25rem 1.5rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+}
+
+.ct-account-card__title {
+	margin: 0 0 0.5rem;
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--ct-color-text);
+}
+
+.ct-account-card__text {
+	margin: 0;
+	font-size: 0.9375rem;
+	color: var(--ct-color-text-muted);
+	line-height: 1.55;
+}
+
+/* -------------------------------------------------------------------------
+   Kaarten & sectiepanelen — schaduw + lichte hover
+   ------------------------------------------------------------------------- */
+.ct-account-card,
+.ct-account-subscription,
+.ct-account-profiel,
+.ct-account-hulp-card,
+.ct-account-support-footer,
+.ct-account-password-change-form,
+.ct-account-settings-form {
+	border-radius: 10px;
+	box-shadow: var(--ct-shadow-card);
+	transition:
+		background-color 0.25s ease,
+		border-color 0.25s ease,
+		box-shadow 0.25s ease;
+}
+
+.ct-account-card:hover,
+.ct-account-subscription:hover,
+.ct-account-profiel:hover,
+.ct-account-hulp-card:hover,
+.ct-account-password-change-form:hover,
+.ct-account-settings-form:hover {
+	background-color: var(--ct-bg-card-hover);
+	border-color: #383838;
+	box-shadow: var(--ct-shadow-card-hover);
+}
+
+/* -------------------------------------------------------------------------
+   Abonnement (primair op overzicht)
+   ------------------------------------------------------------------------- */
+.ct-account-profiel {
+	width: 100%;
+	padding: 1.5rem 1.75rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+}
+
+.ct-account-profiel__title {
+	margin: 0 0 1.1rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-profiel__card-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.15rem 1.5rem;
+	width: 100%;
+}
+
+.ct-account-profiel__col-middle {
+	flex: 1 1 14rem;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+}
+
+.ct-account-profiel__summary[hidden] {
+	display: none !important;
+}
+
+.ct-account-profiel__summary-name {
+	margin: 0;
+	font-size: 1.0625rem;
+	font-weight: 700;
+	line-height: 1.35;
+	color: #ffffff;
+}
+
+.ct-account-profiel__summary-email,
+.ct-account-profiel__summary-phone {
+	margin: 0.25rem 0 0;
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.45;
+	color: #aaaaaa;
+}
+
+.ct-account-profiel__summary-phone {
+	margin-top: 0.15rem;
+}
+
+.ct-account-profiel--form-collapsed .ct-account-profiel__main {
+	display: none;
+}
+
+.ct-account-profiel--form-collapsed .ct-account-profiel__col-middle {
+	gap: 0;
+}
+
+.ct-account-profiel__form-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	flex-shrink: 0;
+	margin-left: auto;
+	padding: 0.55rem 1.1rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #ffffff;
+	background-color: transparent;
+	border: 1px solid #3a3a3a;
+	border-radius: 8px;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.ct-account-profiel__form-toggle:hover,
+.ct-account-profiel__form-toggle:focus {
+	border-color: #555555;
+	background-color: rgba(255, 255, 255, 0.05);
+	outline: none;
+}
+
+.ct-account-profiel__form-toggle-icon {
+	display: block;
+	flex-shrink: 0;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-profiel__form-toggle-label {
+	white-space: nowrap;
+}
+
+.ct-account-profiel__avatar {
+	flex-shrink: 0;
+}
+
+.ct-account-profiel__avatar-col {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.ct-account-profiel__avatar-figure {
+	position: relative;
+	width: 120px;
+	flex-shrink: 0;
+}
+
+.ct-account-profiel__main {
+	flex: 1;
+	min-width: 0;
+	max-width: 32rem;
+	width: 100%;
+}
+
+.ct-account-profiel__form-panel {
+	width: 100%;
+	min-width: 0;
+}
+
+.ct-account-profiel__form-panel[hidden] {
+	display: none !important;
+}
+
+.ct-account-profile-edit-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
+
+.ct-account-profile-image {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 2px solid #333333;
+	flex-shrink: 0;
+	background-color: var(--ct-bg-input);
+	box-sizing: border-box;
+}
+
+.ct-account-profile-image .ct-account-profiel__avatar-img,
+.ct-account-profile-image__fallback,
+.ct-account-profile-image__fallback .avatar,
+.ct-account-profile-image__fallback .ct-account-profiel__avatar-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.ct-account-profile-image__fallback .avatar,
+.ct-account-profile-image__fallback .ct-account-profiel__avatar-img {
+	border: none !important;
+	border-radius: 0;
+	max-width: none;
+}
+
+.ct-account-profile-image__status {
+	margin: 0;
+	font-size: 0.8125rem;
+	line-height: 1.45;
+	color: var(--ct-color-text-muted);
+	max-width: 16rem;
+}
+
+.ct-account-profile-image__status--error {
+	color: #ff8a9a;
+	font-weight: 600;
+}
+
+.ct-account-profile-image-upload--camera {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.35rem;
+	height: 2.35rem;
+	padding: 0;
+	margin: 0;
+	border-radius: 50%;
+	border: 2px solid #1f1f1f;
+	background-color: #404040;
+	color: #ffffff;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition:
+		background-color 0.2s ease,
+		transform 0.15s ease,
+		box-shadow 0.2s ease;
+}
+
+.ct-account-profile-image-upload--camera:hover,
+.ct-account-profile-image-upload--camera:focus {
+	background-color: #4a4a4a;
+	outline: none;
+	transform: scale(1.05);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+}
+
+.ct-account-profile-image-upload__svg {
+	display: block;
+	width: 1.15rem;
+	height: 1.15rem;
+}
+
+.ct-account-profiel__details {
+	flex: 1 1 220px;
+	margin: 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.ct-account-profiel__row {
+	display: grid;
+	grid-template-columns: minmax(0, 120px) 1fr;
+	gap: 0.35rem 1.25rem;
+	align-items: baseline;
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.ct-account-profiel__row:last-child {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.ct-account-profiel__label {
+	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #aaaaaa;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.ct-account-profiel__value {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: #ffffff;
+	line-height: 1.45;
+	word-break: break-word;
+}
+
+.ct-account-edit-profile-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.65rem 1.25rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 8px;
+	border: 2px solid rgb(255, 77, 109);
+	background-color: rgb(255, 77, 109);
+	color: #ffffff;
+	transition:
+		background-color 0.22s ease,
+		border-color 0.22s ease,
+		color 0.22s ease,
+		box-shadow 0.22s ease;
+}
+
+.ct-account-edit-profile-btn:hover,
+.ct-account-edit-profile-btn:focus {
+	background-color: #ff5a7a;
+	border-color: #ff5a7a;
+	color: #ffffff;
+	outline: none;
+	box-shadow: 0 4px 14px rgba(255, 77, 109, 0.35);
+}
+
+.ct-account-edit-profile-btn:focus-visible {
+	box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgb(255, 77, 109);
+}
+
+/* -------------------------------------------------------------------------
+   Hulp nodig? (dashboard zijkaart)
+   ------------------------------------------------------------------------- */
+.ct-account-hulp-card {
+	width: 100%;
+	padding: 1.25rem 1.35rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+}
+
+.ct-account-hulp-card__head {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	margin-bottom: 0.65rem;
+}
+
+.ct-account-hulp-card__head-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #ffffff;
+}
+
+.ct-account-hulp-card__head-svg {
+	display: block;
+}
+
+.ct-account-hulp-card__title {
+	margin: 0;
+	font-size: 1.0625rem;
+	font-weight: 700;
+	line-height: 1.35;
+	color: #ffffff;
+}
+
+.ct-account-hulp-card__intro {
+	margin: 0 0 1rem;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-hulp-card__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.7rem;
+}
+
+.ct-account-hulp-card__item {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin: 0;
+}
+
+.ct-account-hulp-card__icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-hulp-card__svg {
+	display: block;
+}
+
+.ct-account-hulp-card__link {
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.45;
+	color: rgb(255, 77, 109);
+	text-decoration: none;
+	word-break: break-all;
+	transition:
+		color 0.2s ease,
+		opacity 0.2s ease;
+}
+
+.ct-account-hulp-card__link:hover,
+.ct-account-hulp-card__link:focus {
+	color: var(--ct-color-accent-soft);
+	outline: none;
+	opacity: 0.95;
+	text-decoration: none;
+}
+
+.ct-account-body .ct-account-support-footer__inline-link,
+.ct-account-body .ct-account-support-footer__inline-link:hover,
+.ct-account-body .ct-account-support-footer__inline-link:focus,
+.ct-account-body .ct-account-support-footer__inline-link:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   Support / factuur — banner (reference: #111, 2 regels, info-icoon)
+   ------------------------------------------------------------------------- */
+.ct-account-support-footer {
+	width: 100%;
+	padding: 1.25rem 1.5rem;
+	background-color: #111111;
+	border: 1px solid #252525;
+	border-radius: 10px;
+	box-shadow: 0 4px 22px rgba(0, 0, 0, 0.4);
+	transition:
+		background-color 0.22s ease,
+		border-color 0.22s ease,
+		box-shadow 0.22s ease;
+}
+
+.ct-account-support-footer:hover,
+.ct-account-support-footer:focus-within {
+	background-color: #151515;
+	border-color: #333333;
+	box-shadow: 0 6px 28px rgba(0, 0, 0, 0.48);
+}
+
+.ct-account-support-footer__row {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.ct-account-support-footer__info-badge {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	margin-top: 0.15rem;
+	border-radius: 50%;
+	background-color: #5c151c;
+	border: 2px solid rgb(255, 77, 109);
+}
+
+.ct-account-support-footer__info-letter {
+	font-size: 0.95rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: inherit;
+	color: #ffffff;
+	line-height: 1;
+}
+
+.ct-account-support-footer__copy {
+	flex: 1;
+	min-width: 0;
+}
+
+.ct-account-support-footer__heading {
+	margin: 0 0 0.4rem;
+	padding: 0;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.35;
+	color: #ffffff;
+}
+
+.ct-account-support-footer__sub {
+	margin: 0;
+	padding: 0;
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #c8c8c8;
+}
+
+.ct-account-support-footer__inline-link {
+	font-weight: 600;
+	color: rgb(255, 77, 109) !important;
+	-webkit-text-fill-color: rgb(255, 77, 109);
+	text-decoration: none !important;
+	word-break: break-all;
+	transition:
+		color 0.2s ease,
+		-webkit-text-fill-color 0.2s ease,
+		opacity 0.2s ease;
+}
+
+.ct-account-support-footer__inline-link:hover,
+.ct-account-support-footer__inline-link:focus {
+	color: #ff7a94 !important;
+	-webkit-text-fill-color: #ff7a94;
+	text-decoration: none;
+	outline: none;
+}
+
+@media (min-width: 601px) {
+	.ct-account-support-footer__row {
+		align-items: center;
+	}
+
+	.ct-account-support-footer__info-badge {
+		margin-top: 0;
+	}
+}
+
+@media (max-width: 600px) {
+	.ct-account-support-footer {
+		padding: 1.1rem 1.15rem;
+	}
+
+	.ct-account-support-footer__heading {
+		font-size: 0.9375rem;
+	}
+
+	.ct-account-support-footer__sub {
+		font-size: 0.8125rem;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   Facturen-tab (bestellingen als facturen)
+   ------------------------------------------------------------------------- */
+.ct-account-invoices {
+	width: 100%;
+}
+
+.ct-account-invoices__title {
+	margin: 0 0 1rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-text);
+}
+
+.ct-account p.ct-account-invoices-empty {
+	margin: 0;
+	font-size: 0.9375rem;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-invoices-scroll {
+	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+	background-color: var(--ct-bg-input);
+	box-shadow: var(--ct-shadow-card);
+	transition:
+		box-shadow 0.25s ease,
+		border-color 0.25s ease,
+		background-color 0.25s ease;
+}
+
+.ct-account-invoices-scroll:hover {
+	box-shadow: var(--ct-shadow-card-hover);
+	border-color: #383838;
+	background-color: var(--ct-bg-card);
+}
+
+.ct-account-invoices-table {
+	width: 100%;
+	min-width: 640px;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+	color: #ffffff;
+}
+
+.ct-account-invoices-table thead th {
+	padding: 0.75rem 1rem;
+	text-align: left;
+	font-weight: 700;
+	color: #ffffff;
+	background-color: #111111;
+	border-bottom: 1px solid #2a2a2a;
+}
+
+.ct-account-invoices-table tbody td {
+	padding: 0.75rem 1rem;
+	vertical-align: middle;
+	background-color: #1a1a1a;
+	border-bottom: 1px solid #2a2a2a;
+	color: #ffffff;
+	transition: background-color 0.2s ease;
+}
+
+.ct-account-invoices-table__row:hover td {
+	background-color: #262626;
+}
+
+.ct-account-invoices-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.ct-account-invoice-number {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ct-account-invoice-date {
+	color: #e5e5e5;
+	white-space: nowrap;
+}
+
+.ct-account-invoice-amount {
+	font-weight: 600;
+}
+
+.ct-account-invoice-amount .woocommerce-Price-amount,
+.ct-account-invoice-amount .amount {
+	color: #ffffff;
+}
+
+.ct-account-invoice-status {
+	min-width: 8rem;
+}
+
+.ct-account-invoice-status-badge {
+	display: inline-block;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: #aaaaaa;
+}
+
+.ct-account-invoice-download {
+	white-space: nowrap;
+}
+
+.ct-account-invoice-download-link {
+	display: inline-flex;
+	align-items: center;
+	font-weight: 600;
+	font-size: 0.8125rem;
+	color: rgb(255, 77, 109);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.ct-account-invoice-download-link:hover,
+.ct-account-invoice-download-link:focus {
+	color: #ff8fa3;
+	text-decoration: underline;
+	outline: none;
+}
+
+.ct-account-invoices-pagination {
+	margin-top: 1.25rem;
+}
+
+.ct-account-invoices-pagination .page-numbers {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ct-account-invoices-pagination .page-numbers li {
+	margin: 0;
+	display: inline-block;
+}
+
+.ct-account-invoices-pagination .page-numbers a,
+.ct-account-invoices-pagination .page-numbers span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.25rem;
+	padding: 0.4rem 0.65rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.2;
+	border-radius: 6px;
+	text-decoration: none;
+	color: #ffffff;
+	background-color: #1a1a1a;
+	border: 1px solid #333333;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-invoices-pagination .page-numbers a:hover,
+.ct-account-invoices-pagination .page-numbers a:focus {
+	background-color: #262626;
+	border-color: rgb(255, 77, 109);
+	color: rgb(255, 77, 109);
+	outline: none;
+}
+
+.ct-account-invoices-pagination .page-numbers span.current {
+	background-color: rgb(255, 77, 109);
+	border-color: rgb(255, 77, 109);
+	color: #ffffff;
+}
+
+.ct-account-invoices-pagination .page-numbers span.dots {
+	background-color: transparent;
+	border-color: transparent;
+	color: #aaaaaa;
+}
+
+/* -------------------------------------------------------------------------
+   Wachtwoord wijzigen
+   ------------------------------------------------------------------------- */
+.ct-account-password {
+	width: 100%;
+	max-width: 32rem;
+}
+
+.ct-account-password__title {
+	margin: 0 0 1.25rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-text);
+}
+
+.ct-account-password-change-form,
+.ct-account-settings-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+}
+
+.ct-account-password-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin: 0;
+}
+
+.ct-account-password-field--submit {
+	margin-top: 0.25rem;
+}
+
+.ct-account-password-field__label {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #aaaaaa;
+}
+
+.ct-account-password-change-form .ct-account-input,
+.ct-account-settings-form .ct-account-input,
+.ct-account-profile-edit-form .ct-account-input {
+	width: 100%;
+	padding: 0.65rem 0.85rem;
+	font-family: inherit;
+	font-size: 0.9375rem;
+	line-height: 1.4;
+	color: #ffffff;
+	background-color: #111111;
+	border: 1px solid #333333;
+	border-radius: 8px;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.ct-account-password-change-form .ct-account-input:hover,
+.ct-account-settings-form .ct-account-input:hover,
+.ct-account-profile-edit-form .ct-account-input:hover {
+	border-color: #444444;
+}
+
+.ct-account-password-change-form .ct-account-input:focus,
+.ct-account-settings-form .ct-account-input:focus,
+.ct-account-profile-edit-form .ct-account-input:focus {
+	outline: none;
+	border-color: #555555;
+	background-color: #151515;
+}
+
+.ct-account-password-change-form .woocommerce-invalid .ct-account-input,
+.ct-account-settings-form .woocommerce-invalid .ct-account-input,
+.ct-account-profile-edit-form .woocommerce-invalid .ct-account-input,
+.ct-account-password-change-form .error .ct-account-input,
+.ct-account-settings-form .error .ct-account-input,
+.ct-account-profile-edit-form .error .ct-account-input,
+.ct-account-password-change-form .ct-account-input.is-error,
+.ct-account-settings-form .ct-account-input.is-error,
+.ct-account-profile-edit-form .ct-account-input.is-error,
+.ct-account-password-change-form .ct-account-input.error,
+.ct-account-settings-form .ct-account-input.error,
+.ct-account-profile-edit-form .ct-account-input.error {
+	border-color: rgb(255, 77, 109);
+}
+
+.ct-account-password-change-form__hint {
+	margin: 0;
+	min-height: 1.25rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-password-change-form__hint[hidden] {
+	display: none;
+}
+
+.ct-account-settings {
+	width: 100%;
+	max-width: 32rem;
+}
+
+.ct-account-settings__title {
+	margin: 0 0 1.25rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-text);
+}
+
+.ct-account-settings-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin: 0;
+}
+
+.ct-account-settings-field--link {
+	margin-top: 0.25rem;
+}
+
+.ct-account-settings-field--submit {
+	margin-top: 0.35rem;
+}
+
+.ct-account-settings-field__label {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #aaaaaa;
+}
+
+.ct-account-settings-field__hint {
+	margin: 0;
+	font-size: 0.75rem;
+	line-height: 1.45;
+	color: #888888;
+}
+
+.ct-account-settings-form .ct-account-settings-username {
+	opacity: 0.9;
+	cursor: default;
+	color: #cccccc;
+}
+
+.ct-account-settings-password-link {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: rgb(255, 77, 109);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.ct-account-settings-password-link:hover,
+.ct-account-settings-password-link:focus {
+	color: #ff8fa3;
+	text-decoration: underline;
+	outline: none;
+}
+
+.ct-account-settings-form__client-error {
+	margin: 0;
+	min-height: 1.25rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-settings-form__client-error[hidden] {
+	display: none;
+}
+
+.ct-account-profile-edit-form__client-error {
+	margin: 0;
+	min-height: 1.25rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-profile-edit-form__client-error[hidden] {
+	display: none;
+}
+
+.ct-account-submit-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	max-width: 16rem;
+	padding: 0.7rem 1.25rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #ffffff;
+	cursor: pointer;
+	border: 2px solid rgb(255, 77, 109);
+	border-radius: 8px;
+	background-color: rgb(255, 77, 109);
+	transition:
+		background-color 0.22s ease,
+		border-color 0.22s ease,
+		box-shadow 0.22s ease;
+}
+
+.ct-account-submit-button:hover,
+.ct-account-submit-button:focus {
+	background-color: #ff5a7a;
+	border-color: #ff5a7a;
+	outline: none;
+	box-shadow: 0 4px 14px rgba(255, 77, 109, 0.35);
+}
+
+.ct-account-submit-button:focus-visible {
+	box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgb(255, 77, 109);
+}
+
+@media screen and (max-width: 720px) {
+	.ct-account-invoices-scroll {
+		border-radius: 8px;
+	}
+
+	.ct-account-invoices-table {
+		min-width: 0;
+	}
+
+	.ct-account-invoices-table thead {
+		display: none;
+	}
+
+	.ct-account-invoices-table tbody tr {
+		display: block;
+		margin-bottom: 0.75rem;
+		border: 1px solid #2a2a2a;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.ct-account-invoices-table tbody tr:last-child {
+		margin-bottom: 0;
+	}
+
+	.ct-account-invoices-table tbody td {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		width: 100%;
+		padding: 0.65rem 1rem;
+		border-bottom: 1px solid #2a2a2a;
+		text-align: right;
+	}
+
+	.ct-account-invoices-table tbody td:last-child {
+		border-bottom: none;
+	}
+
+	.ct-account-invoices-table tbody td::before {
+		content: attr(data-label);
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: #aaaaaa;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		text-align: left;
+		flex-shrink: 0;
+	}
+}
+
+.ct-account-snella-acties {
+	width: 100%;
+}
+
+.ct-account-snella-acties__title {
+	margin: 0 0 1rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-snella-acties__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
+	width: 100%;
+	align-items: stretch;
+}
+
+.ct-account-snella-acties__card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+	min-height: 0;
+	padding: 1.1rem 1.15rem 1.1rem 1.1rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 12px;
+	color: #ffffff;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: var(--ct-shadow-card);
+	background-image: none !important;
+	transition:
+		background-color 0.22s ease,
+		border-color 0.22s ease,
+		transform 0.2s ease,
+		box-shadow 0.22s ease;
+}
+
+.ct-account-snella-acties__card:hover,
+.ct-account-snella-acties__card:focus {
+	background-color: var(--ct-bg-card-hover);
+	border-color: #3a3a3a;
+	outline: none;
+	transform: translateY(-2px);
+	box-shadow: var(--ct-shadow-card-hover);
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-snella-icon-ring-hover);
+}
+
+.ct-account-snella-acties__card:active {
+	transform: translateY(0);
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+.ct-account-snella-acties__icon-ring {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 3.5rem;
+	height: 3.5rem;
+	border-radius: 50%;
+	background-color: var(--ct-snella-icon-ring);
+	color: #ffffff;
+	transition: background-color 0.2s ease;
+}
+
+.ct-account-snella-acties__svg {
+	display: block;
+	flex-shrink: 0;
+	width: 1.75rem;
+	height: auto;
+	max-height: 1.85rem;
+}
+
+.ct-account-snella-acties__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 0.35rem;
+	flex: 1 1 auto;
+	min-width: 0;
+	text-align: left;
+}
+
+.ct-account-snella-acties__card-title {
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: #ffffff;
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+}
+
+.ct-account-snella-acties__card-text {
+	font-size: 0.8125rem;
+	font-weight: 400;
+	line-height: 1.45;
+	color: var(--ct-color-text-muted);
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+}
+
+.ct-account-snella-acties__chevron {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-left: 0.15rem;
+	color: var(--ct-color-accent);
+	line-height: 0;
+}
+
+.ct-account-snella-acties__chevron-svg {
+	display: block;
+	width: 1.15rem;
+	height: 1.15rem;
+}
+
+.ct-account-card-facturen.ct-account-snella-acties__card:focus-visible {
+	box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgb(255, 77, 109);
+}
+
+.ct-account-card-betalen.ct-account-snella-acties__card:focus-visible {
+	box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgb(255, 77, 109);
+}
+
+.ct-account-card-instellingen.ct-account-snella-acties__card:focus-visible {
+	box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgb(255, 77, 109);
+}
+
+.ct-account-subscription {
+	padding: 1.5rem 1.75rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+}
+
+.ct-account-subscription__title {
+	margin: 0 0 1.25rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-subscription__layout {
+	display: block;
+}
+
+.ct-account-subscription__triple {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr) minmax(0, 13.5rem);
+	gap: 0;
+	align-items: stretch;
+	min-width: 0;
+}
+
+.ct-account-subscription__col {
+	min-width: 0;
+	padding: 0.35rem 0 0.15rem;
+}
+
+.ct-account-subscription__col--plan {
+	padding-right: 1.35rem;
+	text-align: left;
+}
+
+.ct-account-sub__plan-row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 1rem 1.15rem;
+	width: 100%;
+	min-width: 0;
+}
+
+.ct-account-sub__plan-main {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ct-account-sub__plan-main .ct-account-sub__plan-name {
+	margin-top: 0;
+}
+
+.ct-account-subscription__col--details {
+	padding-left: 1.35rem;
+	padding-right: 1.35rem;
+	border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ct-account-subscription__col--actions {
+	padding-left: 1.35rem;
+	border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ct-account-sub__plan-icon-ring {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 4.25rem;
+	height: 4.25rem;
+	margin: 0;
+	flex-shrink: 0;
+	border-radius: 50%;
+	color: rgb(255, 77, 109);
+	background: radial-gradient(circle at 50% 35%, #404040 0%, #252525 50%, #121212 100%);
+	border: 1px solid #3a3a3a;
+	box-shadow:
+		0 0 0 1px rgba(0, 0, 0, 0.5) inset,
+		0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.ct-account-sub__plan-icon-ring .ct-account-sub__icon-svg {
+	display: block;
+	width: 2.15rem;
+	height: auto;
+	color: rgb(255, 77, 109);
+	filter: drop-shadow(0 0 2px rgba(255, 77, 109, 0.35));
+}
+
+.ct-account-sub__icon-svg {
+	display: block;
+	flex-shrink: 0;
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+
+.ct-account-sub__plan-icon {
+	margin-bottom: 0.75rem;
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-sub__plan-svg {
+	display: block;
+}
+
+.ct-account-sub__plan-name {
+	margin: 0 0 0.5rem;
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: #ffffff;
+	line-height: 1.3;
+}
+
+.ct-account-sub__plan-price {
+	margin: 0 0 0.5rem;
+	font-size: 0.9375rem;
+	color: #aaaaaa;
+}
+
+.ct-account-sub__plan-price-label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-size: 0.8125rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #aaaaaa;
+}
+
+.ct-account-sub__plan-price-value {
+	font-size: 1.375rem;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.ct-account-sub__plan-price-value .woocommerce-Price-amount,
+.ct-account-sub__plan-price-value .amount {
+	color: #ffffff;
+}
+
+.ct-account-sub__plan-type {
+	margin: 0 0 0.75rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.ct-account-sub__plan-status {
+	margin: 0;
+}
+
+.ct-account-sub__badge {
+	display: inline-block;
+	padding: 0.25rem 0.65rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1.3;
+	border-radius: 999px;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.ct-account-sub__badge--active {
+	background-color: rgba(46, 160, 67, 0.25);
+	color: #6ee7a0;
+	border: 1px solid rgba(46, 160, 67, 0.5);
+}
+
+.ct-account-sub__badge--paused {
+	background-color: rgba(234, 179, 8, 0.2);
+	color: #facc15;
+	border: 1px solid rgba(234, 179, 8, 0.45);
+}
+
+.ct-account-sub__badge--cancelled {
+	background-color: rgba(220, 38, 38, 0.2);
+	color: #fca5a5;
+	border: 1px solid rgba(248, 113, 113, 0.45);
+}
+
+.ct-account-sub__details {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.ct-account-sub__details dd {
+	margin-inline-start: 0;
+}
+
+.ct-account-sub__detail-row {
+	display: grid;
+	grid-template-columns: 1.35rem minmax(0, 118px) 1fr;
+	gap: 0.4rem 0.65rem;
+	align-items: center;
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.ct-account-sub__detail-row:last-child {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.ct-account-sub__detail-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.35rem;
+	height: 1.35rem;
+	flex-shrink: 0;
+	color: rgba(255, 255, 255, 0.88);
+	text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+.ct-account-sub__detail-icon .ct-account-sub__icon-svg {
+	width: 1.125rem;
+	height: 1.125rem;
+	color: inherit;
+}
+
+.ct-account-sub__detail-label {
+	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.ct-account-sub__detail-value {
+	margin: 0;
+	font-size: 0.9375rem;
+	color: #ffffff;
+}
+
+.ct-account-sub__actions-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+}
+
+.ct-account-sub__actions-stack a,
+.ct-account-sub__dropdown-menu a {
+	text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+.ct-account-upgrade-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.55rem;
+	width: 100%;
+	margin: 0;
+	padding: 0.75rem 1rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: left;
+	text-decoration: none;
+	border-radius: 9px;
+	border: 1px solid rgba(255, 255, 255, 0.38);
+	background-color: transparent;
+	color: #ffffff;
+	cursor: pointer;
+	box-shadow: none;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.15s ease;
+}
+
+.ct-account-upgrade-btn__star {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.ct-account-upgrade-btn__star .ct-account-sub__icon-svg {
+	width: 1.05rem;
+	height: 1.05rem;
+	color: #ffffff;
+}
+
+.ct-account-upgrade-btn__label {
+	flex: 1 1 auto;
+	text-align: left;
+	min-width: 0;
+}
+
+.ct-account-upgrade-btn__pro {
+	color: var(--ct-color-pro-highlight);
+	font-weight: 800;
+}
+
+.ct-account-upgrade-btn:hover,
+.ct-account-upgrade-btn:focus {
+	background-color: rgba(255, 255, 255, 0.04);
+	border-color: rgba(255, 255, 255, 0.55);
+	color: #ffffff;
+	outline: none;
+}
+
+.ct-account-upgrade-btn:active {
+	transform: scale(0.99);
+}
+
+.ct-account-cancel-btn,
+.ct-account-cancel-subscription-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 0.7rem 1rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 8px;
+	border: 2px solid rgba(248, 113, 113, 0.55);
+	background-color: rgba(220, 38, 38, 0.12);
+	color: #fca5a5;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-cancel-subscription-trigger {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.ct-account-cancel-btn:hover,
+.ct-account-cancel-btn:focus,
+.ct-account-cancel-subscription-trigger:hover,
+.ct-account-cancel-subscription-trigger:focus {
+	background-color: rgba(220, 38, 38, 0.22);
+	border-color: #f87171;
+	color: #fecaca;
+	outline: none;
+}
+
+/* -------------------------------------------------------------------------
+   Abonnement opzeggen — modaal (donker thema)
+   ------------------------------------------------------------------------- */
+.ct-account-cancel-subscription-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.25rem;
+	box-sizing: border-box;
+}
+
+.ct-account-cancel-subscription-modal[hidden] {
+	display: none !important;
+}
+
+.ct-account-cancel-subscription-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.72);
+	backdrop-filter: blur(2px);
+}
+
+.ct-account-cancel-subscription-modal__dialog {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 26rem;
+	padding: 1.5rem 1.5rem 1.35rem;
+	background-color: #1a1a1a;
+	border: 1px solid #333333;
+	border-radius: 12px;
+	box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+}
+
+.ct-account-cancel-subscription-modal__title {
+	margin: 0 0 0.75rem;
+	font-size: 1.125rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: #ffffff;
+}
+
+.ct-account-cancel-subscription-modal__message {
+	margin: 0 0 1.25rem;
+	font-size: 0.9375rem;
+	line-height: 1.55;
+	color: #cccccc;
+}
+
+.ct-account-cancel-subscription-modal__actions {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 0.65rem;
+}
+
+@media screen and (min-width: 400px) {
+	.ct-account-cancel-subscription-modal__actions {
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+	}
+}
+
+.ct-account-cancel-subscription-modal .ct-account-cancel-subscription-confirm {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0.65rem 1.25rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #ffffff;
+	cursor: pointer;
+	border: 2px solid var(--ct-color-accent);
+	border-radius: 8px;
+	background-color: var(--ct-color-accent);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.ct-account-cancel-subscription-modal .ct-account-cancel-subscription-confirm:hover:not(:disabled),
+.ct-account-cancel-subscription-modal .ct-account-cancel-subscription-confirm:focus:not(:disabled) {
+	background-color: var(--ct-color-accent-soft);
+	border-color: var(--ct-color-accent-soft);
+	outline: none;
+}
+
+.ct-account-cancel-subscription-modal .ct-account-cancel-subscription-confirm:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.ct-account-cancel-subscription-modal .ct-account-cancel-btn {
+	width: auto;
+	min-width: 7rem;
+	min-height: 48px;
+	flex: 1 1 auto;
+}
+
+@media screen and (min-width: 400px) {
+	.ct-account-cancel-subscription-modal .ct-account-cancel-btn {
+		flex: 0 0 auto;
+	}
+}
+
+.ct-account-cancel-subscription-modal__status {
+	margin: 1rem 0 0;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.45;
+	color: #6ee7a0;
+}
+
+.ct-account-cancel-subscription-modal__status[hidden] {
+	display: none !important;
+}
+
+.ct-account-cancel-subscription-modal__status.is-error {
+	color: #fca5a5;
+}
+
+body.ct-account-cancel-modal-open {
+	overflow: hidden;
+}
+
+.ct-account-subscription__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	width: 100%;
+	padding: 0.75rem 1rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 9px;
+	border-width: 1px;
+	border-style: solid;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-subscription__btn-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	text-align: left;
+}
+
+.ct-account-subscription__btn--primary .ct-account-subscription__btn-label,
+.ct-account-subscription__btn--dropdown .ct-account-subscription__btn-label {
+	text-align: center;
+}
+
+.ct-account-subscription__btn--primary {
+	justify-content: space-between;
+	gap: 0.5rem;
+	background-color: var(--ct-color-accent);
+	border-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-account-subscription__btn--primary:hover,
+.ct-account-subscription__btn--primary:focus {
+	background-color: var(--ct-color-accent-soft);
+	border-color: var(--ct-color-accent-soft);
+	color: #ffffff;
+	outline: none;
+}
+
+.ct-account-subscription__btn--secondary {
+	background-color: var(--ct-bg-input);
+	border-color: var(--ct-color-accent);
+	color: var(--ct-color-text);
+}
+
+.ct-account-subscription__btn--secondary:hover,
+.ct-account-subscription__btn--secondary:focus {
+	background-color: var(--ct-bg-card);
+	border-color: var(--ct-color-accent-soft);
+	color: #ffffff;
+	outline: none;
+}
+
+.ct-account-subscription__btn--dropdown {
+	background-color: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.38);
+	color: #ffffff;
+	justify-content: space-between;
+}
+
+.ct-account-subscription__btn--dropdown:hover,
+.ct-account-subscription__btn--dropdown:focus {
+	background-color: rgba(255, 255, 255, 0.04);
+	border-color: rgba(255, 255, 255, 0.55);
+	outline: none;
+}
+
+.ct-account-sub__dropdown {
+	position: relative;
+	width: 100%;
+}
+
+.ct-account-sub__dropdown-chevron {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-left: 0;
+	line-height: 0;
+	color: #ffffff;
+	transition: transform 0.2s ease;
+}
+
+.ct-account-sub__dropdown-chevron .ct-account-sub__icon-svg {
+	width: 0.875rem;
+	height: 0.875rem;
+	color: inherit;
+}
+
+.ct-account-sub__dropdown.is-open .ct-account-sub__dropdown-chevron {
+	transform: rotate(180deg);
+	color: #ffffff;
+}
+
+.ct-account-sub__dropdown-menu {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 0.35rem 0;
+	list-style: none;
+	background-color: #111111;
+	border: 1px solid #333333;
+	border-radius: 8px;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.ct-account-sub__dropdown-item {
+	margin: 0;
+	border-bottom: none !important;
+}
+
+.ct-account-sub__dropdown-link {
+	display: block;
+	padding: 0.55rem 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.ct-account-sub__dropdown-link:hover,
+.ct-account-sub__dropdown-link:focus {
+	background-color: #1a1a1a;
+	color: rgb(255, 77, 109);
+	outline: none;
+}
+
+button.ct-account-sub__dropdown-link {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	font: inherit;
+	cursor: pointer;
+	border: 0;
+	background: transparent;
+	text-align: left;
+}
+
+.ct-account-sub__dropdown-item--danger {
+	margin-top: 0.2rem;
+	padding-top: 0.35rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ct-account-sub__dropdown-link--danger {
+	color: #fca5a5;
+}
+
+.ct-account-sub__dropdown-link--danger:hover,
+.ct-account-sub__dropdown-link--danger:focus {
+	color: #fecaca;
+	background-color: rgba(220, 38, 38, 0.12);
+}
+
+.ct-account-subscription__footnote {
+	margin: 1.25rem 0 0;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	color: #aaaaaa;
+}
+
+.ct-account-subscription__footnote-inner {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.ct-account-subscription__footnote-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-top: 0.08rem;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-subscription__footnote-icon .ct-account-sub__icon-svg {
+	width: 1rem;
+	height: 1rem;
+	color: inherit;
+}
+
+.ct-account-subscription__footnote-text {
+	min-width: 0;
+}
+
+.ct-account-subscription__empty {
+	padding: 1rem 0;
+	text-align: left;
+}
+
+.ct-account-subscription__empty-text {
+	margin: 0 0 1rem;
+	font-size: 0.9375rem;
+	color: #aaaaaa;
+}
+
+.ct-account-subscription__btn-arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-left: 0;
+	line-height: 0;
+	font-weight: 400;
+}
+
+.ct-account-subscription__btn-arrow .ct-account-sub__icon-svg {
+	width: 1rem;
+	height: 1rem;
+	color: currentColor;
+}
+
+.ct-account-subscription__btn--primary .ct-account-subscription__btn-arrow .ct-account-sub__icon-svg {
+	color: #ffffff;
+}
+
+/* -------------------------------------------------------------------------
+   WooCommerce-meldingen (donker)
+   ------------------------------------------------------------------------- */
+.ct-account-main__notices .woocommerce-message,
+.ct-account-main__notices .woocommerce-info,
+.ct-account-main__notices .woocommerce-error,
+.ct-account-main__notices .woocommerce-notice {
+	margin: 0 0 0.75rem;
+	padding: 0.75rem 1rem;
+	border-radius: 6px;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #1a1a1a;
+	color: #ffffff;
+	list-style: none;
+}
+
+.ct-account-main__notices .woocommerce-message {
+	border-color: #2a7d4a;
+}
+
+.ct-account-main__notices .woocommerce-info {
+	border-color: #3a6ea5;
+}
+
+.ct-account-main__notices .woocommerce-error {
+	border-color: rgb(255, 77, 109);
+}
+
+.ct-account-main__notices .woocommerce-error li,
+.ct-account-main__notices .woocommerce-message a,
+.ct-account-main__notices .woocommerce-info a,
+.ct-account-main__notices .woocommerce-error a {
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-body .woocommerce-Addresses,
+.ct-account-body .woocommerce-orders-table,
+.ct-account-body .woocommerce-order-details,
+.ct-account-body .woocommerce-EditAccountForm,
+.ct-account-body .woocommerce-address-fields,
+.ct-account-body .shop_table,
+.ct-account-body form {
+	color: #ffffff;
+}
+
+.ct-account-body .woocommerce-Address-title h3,
+.ct-account-body .woocommerce-order-details__title,
+.ct-account-body legend {
+	color: #ffffff;
+}
+
+.ct-account-body .woocommerce-orders-table th,
+.ct-account-body .woocommerce-orders-table td,
+.ct-account-body .shop_table th,
+.ct-account-body .shop_table td {
+	border-color: #333333;
+}
+
+.ct-account-body a {
+	color: rgb(255, 77, 109);
+}
+
+.ct-account-body a:hover,
+.ct-account-body a:focus {
+	color: #ff7a94;
+}
+
+/*
+ * .ct-account-body a is (class + element) and overrides single-class button
+ * rules — subscription primary then inherits pink on pink accent background.
+ */
+.ct-account-body a.ct-account-subscription__btn--primary,
+.ct-account-body .ct-account-subscription__btn--primary {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-subscription__btn--primary:hover,
+.ct-account-body a.ct-account-subscription__btn--primary:focus,
+.ct-account-body .ct-account-subscription__btn--primary:hover,
+.ct-account-body .ct-account-subscription__btn--primary:focus {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-subscription__btn--secondary,
+.ct-account-body .ct-account-subscription__btn--secondary {
+	color: var(--ct-color-text) !important;
+	-webkit-text-fill-color: var(--ct-color-text);
+}
+
+.ct-account-body a.ct-account-subscription__btn--secondary:hover,
+.ct-account-body a.ct-account-subscription__btn--secondary:focus,
+.ct-account-body .ct-account-subscription__btn--secondary:hover,
+.ct-account-body .ct-account-subscription__btn--secondary:focus {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-subscription__btn--dropdown,
+.ct-account-body .ct-account-subscription__btn--dropdown {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-subscription__btn--dropdown:hover,
+.ct-account-body a.ct-account-subscription__btn--dropdown:focus,
+.ct-account-body .ct-account-subscription__btn--dropdown:hover,
+.ct-account-body .ct-account-subscription__btn--dropdown:focus {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-upgrade-btn,
+.ct-account-body .ct-account-upgrade-btn {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-upgrade-btn:hover,
+.ct-account-body a.ct-account-upgrade-btn:focus,
+.ct-account-body .ct-account-upgrade-btn:hover,
+.ct-account-body .ct-account-upgrade-btn:focus {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-upgrade-btn .ct-account-upgrade-btn__pro,
+.ct-account-body .ct-account-upgrade-btn .ct-account-upgrade-btn__pro {
+	color: var(--ct-color-pro-highlight) !important;
+	-webkit-text-fill-color: var(--ct-color-pro-highlight);
+}
+
+.ct-account-body button.ct-account-profile-image-upload--camera,
+.ct-account-body .ct-account-profile-image-upload--camera {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	background-color: #404040 !important;
+	border-color: #1f1f1f !important;
+}
+
+.ct-account-body button.ct-account-profile-image-upload--camera:hover,
+.ct-account-body button.ct-account-profile-image-upload--camera:focus,
+.ct-account-body .ct-account-profile-image-upload--camera:hover,
+.ct-account-body .ct-account-profile-image-upload--camera:focus {
+	color: #ffffff !important;
+	background-color: #4a4a4a !important;
+	border-color: #1f1f1f !important;
+}
+
+.ct-account-body .ct-account-profiel__form-toggle {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	background-color: transparent !important;
+	border-color: #3a3a3a !important;
+}
+
+.ct-account-body .ct-account-profiel__form-toggle:hover,
+.ct-account-body .ct-account-profiel__form-toggle:focus {
+	color: #ffffff !important;
+	background-color: rgba(255, 255, 255, 0.05) !important;
+	border-color: #555555 !important;
+}
+
+.ct-account-body .ct-account-profiel__form-toggle-icon {
+	color: rgb(255, 77, 109) !important;
+}
+
+.ct-account-body a.ct-account-edit-profile-btn,
+.ct-account-body button.ct-account-edit-profile-btn,
+.ct-account-body .ct-account-edit-profile-btn {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-edit-profile-btn:hover,
+.ct-account-body a.ct-account-edit-profile-btn:focus,
+.ct-account-body button.ct-account-edit-profile-btn:hover,
+.ct-account-body button.ct-account-edit-profile-btn:focus,
+.ct-account-body .ct-account-edit-profile-btn:hover,
+.ct-account-body .ct-account-edit-profile-btn:focus {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-snella-acties__card,
+.ct-account-body a.ct-account-snella-acties__card:visited,
+.ct-account-body a.ct-account-snella-acties__card:hover,
+.ct-account-body a.ct-account-snella-acties__card:focus,
+.ct-account-body a.ct-account-snella-acties__card:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+.ct-account-body a.ct-account-snella-acties__card * {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+.ct-account-body a.ct-account-snella-acties__card,
+.ct-account-body a.ct-account-snella-acties__card:visited,
+.ct-account-body a.ct-account-snella-acties__card:hover,
+.ct-account-body a.ct-account-snella-acties__card:focus,
+.ct-account-body a.ct-account-snella-acties__card:active {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-snella-acties__card .ct-account-snella-acties__card-title {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-snella-acties__card .ct-account-snella-acties__card-text {
+	color: #aaaaaa !important;
+	-webkit-text-fill-color: #aaaaaa;
+}
+
+.ct-account-body a.ct-account-snella-acties__card .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-snella-icon-ring) !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+.ct-account-body a.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+.ct-account-body a.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-snella-icon-ring-hover) !important;
+}
+
+.ct-account-body a.ct-account-snella-acties__card .ct-account-snella-acties__chevron {
+	color: rgb(255, 77, 109) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Responsief — tablet/telefoon (max 768px), scoped met .ct-account-mobile
+   ------------------------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+	body.ct-account-mobile-nav-open {
+		overflow: hidden;
+	}
+
+	.ct-account-mobile.ct-account {
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	.ct-account-mobile .ct-account-sidebar {
+		flex: none;
+		width: 100%;
+		max-width: none;
+		min-height: 0;
+		padding: 0.75rem 0 0;
+		border-right: none;
+		border-bottom: 1px solid #222222;
+		position: relative;
+		z-index: 40;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__brand-row,
+	.ct-account-mobile .ct-account-sidebar__brand-row--no-logo {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 0.75rem;
+		padding: 1rem 1rem 0.85rem;
+		border-bottom: 1px solid #222222;
+	}
+
+	.ct-account-mobile .ct-account-mobile-menu-toggle {
+		display: inline-flex;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__mobile-tabs {
+		display: block;
+		padding: 0.75rem 1rem 0.85rem;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__nav-drawer {
+		display: block;
+		max-height: 0;
+		overflow: hidden;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			max-height 0.35s ease,
+			opacity 0.22s ease,
+			visibility 0.22s ease;
+		border-top: 1px solid transparent;
+	}
+
+	.ct-account-mobile .ct-account-sidebar.is-menu-open .ct-account-sidebar__nav-drawer {
+		max-height: min(70vh, 480px);
+		opacity: 1;
+		visibility: visible;
+		overflow-y: auto;
+		overflow-x: hidden;
+		border-top-color: #222222;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__nav {
+		display: block;
+		padding-top: 0.35rem;
+		padding-bottom: 0.5rem;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__link {
+		min-height: 52px;
+		padding-top: 0.95rem;
+		padding-bottom: 0.95rem;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__icon.dashicons {
+		width: 24px;
+		height: 24px;
+		font-size: 22px;
+		line-height: 24px;
+	}
+
+	.ct-account-mobile .ct-account-tab-select,
+	.ct-account-mobile .ct-account-mobile-tab-select {
+		min-height: 52px;
+		font-size: 1rem;
+		padding: 0.75rem 1rem;
+	}
+
+	.ct-account-mobile .ct-account-main__notices {
+		padding: 0.75rem 1rem 0;
+	}
+
+	.ct-account-mobile .ct-account-header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+		padding: 1.1rem 1rem 1rem;
+	}
+
+	.ct-account-mobile .ct-account-header__title {
+		font-size: 1.5rem;
+	}
+
+	.ct-account-mobile .ct-account-header__subtitle {
+		font-size: 0.9375rem;
+		max-width: none;
+	}
+
+	.ct-account-mobile .ct-account-header__meta {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.75rem;
+	}
+
+	.ct-account-mobile .ct-account-header__bell {
+		width: 48px;
+		height: 48px;
+		min-width: 48px;
+		min-height: 48px;
+	}
+
+	.ct-account-mobile .ct-account-header__avatar {
+		width: 48px;
+		height: 48px;
+		min-width: 48px;
+		min-height: 48px;
+		font-size: 1.0625rem;
+	}
+
+	.ct-account-mobile .ct-account-body {
+		padding: 1rem 1rem 2rem;
+	}
+
+	.ct-account-mobile .ct-account-body__tab-area {
+		gap: 1rem;
+	}
+
+	.ct-account-mobile .ct-account-sidebar__hulp-slot {
+		padding: 0.75rem 1rem 1rem;
+	}
+
+	.ct-account-mobile .ct-account-sidebar .ct-account-hulp-card {
+		padding: 1rem 0.9rem;
+	}
+
+	.ct-account-mobile .ct-account-card {
+		padding: 1.1rem 1.15rem;
+	}
+
+	.ct-account-mobile .ct-account-submit-button {
+		width: 100%;
+		max-width: none;
+		min-height: 52px;
+		padding: 0.85rem 1.25rem;
+		font-size: 1rem;
+	}
+
+	.ct-account-mobile .ct-account-upgrade-btn,
+	.ct-account-mobile .ct-account-cancel-btn,
+	.ct-account-mobile .ct-account-cancel-subscription-trigger {
+		max-width: none;
+		min-height: 52px;
+		padding-top: 0.85rem;
+		padding-bottom: 0.85rem;
+		font-size: 1rem;
+	}
+
+	.ct-account-mobile .ct-account-subscription__btn {
+		min-height: 52px;
+		padding-top: 0.85rem;
+		padding-bottom: 0.85rem;
+		font-size: 1rem;
+	}
+
+	.ct-account-mobile .ct-account-subscription__triple {
+		grid-template-columns: 1fr;
+	}
+
+	.ct-account-mobile .ct-account-subscription__col--plan {
+		padding-right: 0;
+	}
+
+	.ct-account-mobile .ct-account-sub__plan-row {
+		gap: 0.85rem;
+	}
+
+	.ct-account-mobile .ct-account-sub__plan-icon-ring {
+		width: 3.85rem;
+		height: 3.85rem;
+	}
+
+	.ct-account-mobile .ct-account-sub__plan-icon-ring .ct-account-sub__icon-svg {
+		width: 1.75rem;
+	}
+
+	.ct-account-mobile .ct-account-subscription__col--details,
+	.ct-account-mobile .ct-account-subscription__col--actions {
+		border-left: none;
+		padding-left: 0;
+		padding-right: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		padding-top: 1.1rem;
+		margin-top: 0.35rem;
+	}
+
+	.ct-account-mobile .ct-account-sub__detail-row {
+		display: grid;
+		grid-template-columns: 1.35rem 1fr;
+		grid-template-rows: auto auto;
+		column-gap: 0.5rem;
+		row-gap: 0.12rem;
+		align-items: start;
+	}
+
+	.ct-account-mobile .ct-account-sub__detail-icon {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		align-self: center;
+	}
+
+	.ct-account-mobile .ct-account-sub__detail-label {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.ct-account-mobile .ct-account-sub__detail-value {
+		grid-column: 2;
+		grid-row: 2;
+	}
+
+	.ct-account-mobile .ct-account-sub__actions-stack {
+		max-width: 100%;
+	}
+
+	.ct-account-mobile .ct-account-snella-acties__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.ct-account-mobile .ct-account-snella-acties__card {
+		gap: 0.85rem;
+		padding: 1rem 1rem;
+	}
+
+	.ct-account-mobile .ct-account-snella-acties__icon-ring {
+		width: 3.25rem;
+		height: 3.25rem;
+	}
+
+	.ct-account-mobile .ct-account-snella-acties__svg {
+		width: 1.6rem;
+		max-height: 1.7rem;
+	}
+
+	.ct-account-mobile .ct-account-profiel__card-row {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+	}
+
+	.ct-account-mobile .ct-account-profiel__form-toggle {
+		width: 100%;
+		max-width: none;
+		margin-left: 0;
+		min-height: 48px;
+		order: 3;
+	}
+
+	.ct-account-mobile .ct-account-profiel__avatar-col {
+		order: 1;
+	}
+
+	.ct-account-mobile .ct-account-profiel__col-middle {
+		order: 2;
+		width: 100%;
+	}
+
+	.ct-account-mobile .ct-account-edit-profile-btn {
+		width: 100%;
+		min-height: 48px;
+		justify-content: center;
+	}
+
+	.ct-account-mobile .ct-account-profiel__row {
+		grid-template-columns: 1fr;
+		gap: 0.2rem;
+	}
+
+	.ct-account-mobile .ct-account-password-change-form .ct-account-input,
+	.ct-account-mobile .ct-account-settings-form .ct-account-input,
+	.ct-account-mobile .ct-account-profile-edit-form .ct-account-input {
+		min-height: 52px;
+		font-size: 1rem;
+	}
+
+	.ct-account-mobile p,
+	.ct-account-mobile li,
+	.ct-account-mobile dd,
+	.ct-account-mobile dt {
+		font-size: 0.9375rem;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   Volledige breedte (theme / WooCommerce wrappers)
+   body.coachtribe-my-account-shell wordt door de plugin gezet op Mijn account
+   en op singulars met [coachtribe_my_account].
+   ------------------------------------------------------------------------- */
+
+/* Elke voorouder van .ct-account: haal theme max-width / auto-margins weg (:has, Safari 15.4+) */
+body.coachtribe-my-account-shell *:has(.ct-account) {
+	max-width: none !important;
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	box-sizing: border-box;
+}
+
+/*
+ * Hello Elementor + WC “Mijn account” op een gewone pagina: geen #primary, wel
+ * main#content.site-main + .page-content — die moeten expliciet mee.
+ */
+body.coachtribe-my-account-shell main#content.site-main,
+body.coachtribe-my-account-shell .page-content,
+body.woocommerce-account.coachtribe-my-account-shell main#content.site-main,
+body.woocommerce-account.coachtribe-my-account-shell .page-content {
+	max-width: none !important;
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	overflow-x: visible !important;
+}
+
+/* Account-shell: altijd echte viewport-breedte (werkt ook als parent nog max-width heeft) */
+body.coachtribe-my-account-shell .ct-account {
+	width: 100vw !important;
+	max-width: 100vw !important;
+	margin-left: calc(50% - 50vw) !important;
+	margin-right: calc(50% - 50vw) !important;
+	position: relative;
+	box-sizing: border-box;
+}
+
+/* Veelvoorkomende boxed wrappers (ook zonder :has-match op tussenliggende div) */
+body.coachtribe-my-account-shell #page,
+body.coachtribe-my-account-shell .site,
+body.coachtribe-my-account-shell .site-content,
+body.coachtribe-my-account-shell #content,
+body.coachtribe-my-account-shell #primary,
+body.coachtribe-my-account-shell #main,
+body.coachtribe-my-account-shell .site-main,
+body.coachtribe-my-account-shell .content-area,
+body.coachtribe-my-account-shell main,
+body.coachtribe-my-account-shell article,
+body.coachtribe-my-account-shell .entry-content,
+body.coachtribe-my-account-shell .page-content,
+body.coachtribe-my-account-shell .ast-container,
+body.coachtribe-my-account-shell .ast-separate-container,
+body.coachtribe-my-account-shell .ast-plain-container,
+body.coachtribe-my-account-shell .wrap,
+body.coachtribe-my-account-shell .site-inner,
+body.coachtribe-my-account-shell .content-container,
+body.coachtribe-my-account-shell .grid-container,
+body.coachtribe-my-account-shell .neve-main,
+body.coachtribe-my-account-shell .elementor-widget-woocommerce-my-account .elementor-widget-container {
+	max-width: none !important;
+	width: 100% !important;
+}
+
+body.coachtribe-my-account-shell #primary > .woocommerce,
+body.coachtribe-my-account-shell main > .woocommerce,
+body.coachtribe-my-account-shell .woocommerce-MyAccount-content {
+	max-width: none !important;
+	width: 100% !important;
+}
+
+/* Fallback + dubbele dekking voor klassieke WC-body + Hello (geen #primary) */
+body.woocommerce-account #primary,
+body.woocommerce-account #main,
+body.woocommerce-account .site-main,
+body.woocommerce-account .content-area,
+body.woocommerce-account main#content.site-main,
+body.woocommerce-account .page-content {
+	max-width: none !important;
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+body.woocommerce-account #primary > .woocommerce,
+body.woocommerce-account main > .woocommerce,
+body.woocommerce-account .woocommerce-MyAccount-content {
+	max-width: none !important;
+	width: 100% !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	text-underline-offset: 0 !important;
+	text-decoration-thickness: auto !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+	background-image: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link:visited,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link:hover,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link:focus,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link:active,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link:visited,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link:hover,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link:focus,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link:active,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link:visited,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link:hover,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link:focus,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link:active,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link:visited,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link:hover,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link:focus,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+}
+
+body.woocommerce-account .ct-account-hulp-card a.ct-account-hulp-card__link,
+body.woocommerce-account .ct-account-hulp-card a.ct-account-hulp-card__link:visited,
+body.woocommerce-account .ct-account-hulp-card a.ct-account-hulp-card__link:hover,
+body.woocommerce-account .ct-account-hulp-card a.ct-account-hulp-card__link:focus,
+body.woocommerce-account .ct-account-hulp-card a.ct-account-hulp-card__link:active,
+body.coachtribe-my-account-shell .ct-account-hulp-card a.ct-account-hulp-card__link,
+body.coachtribe-my-account-shell .ct-account-hulp-card a.ct-account-hulp-card__link:visited,
+body.coachtribe-my-account-shell .ct-account-hulp-card a.ct-account-hulp-card__link:hover,
+body.coachtribe-my-account-shell .ct-account-hulp-card a.ct-account-hulp-card__link:focus,
+body.coachtribe-my-account-shell .ct-account-hulp-card a.ct-account-hulp-card__link:active,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-hulp-card a.ct-account-hulp-card__link,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-hulp-card a.ct-account-hulp-card__link:visited,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-hulp-card a.ct-account-hulp-card__link:hover,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-hulp-card a.ct-account-hulp-card__link:focus,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-hulp-card a.ct-account-hulp-card__link:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+body.woocommerce-account .ct-account-support-footer a.ct-account-support-footer__inline-link,
+body.woocommerce-account .ct-account-support-footer a.ct-account-support-footer__inline-link:visited,
+body.woocommerce-account .ct-account-support-footer a.ct-account-support-footer__inline-link:hover,
+body.woocommerce-account .ct-account-support-footer a.ct-account-support-footer__inline-link:focus,
+body.woocommerce-account .ct-account-support-footer a.ct-account-support-footer__inline-link:active,
+body.coachtribe-my-account-shell .ct-account-support-footer a.ct-account-support-footer__inline-link,
+body.coachtribe-my-account-shell .ct-account-support-footer a.ct-account-support-footer__inline-link:visited,
+body.coachtribe-my-account-shell .ct-account-support-footer a.ct-account-support-footer__inline-link:hover,
+body.coachtribe-my-account-shell .ct-account-support-footer a.ct-account-support-footer__inline-link:focus,
+body.coachtribe-my-account-shell .ct-account-support-footer a.ct-account-support-footer__inline-link:active,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-support-footer a.ct-account-support-footer__inline-link,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-support-footer a.ct-account-support-footer__inline-link:visited,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-support-footer a.ct-account-support-footer__inline-link:hover,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-support-footer a.ct-account-support-footer__inline-link:focus,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-support-footer a.ct-account-support-footer__inline-link:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar a.ct-account-sidebar__link *,
+body.woocommerce-account .ct-account-sidebar a.ct-account-sidebar__link *,
+body.coachtribe-my-account-shell .ct-account-sidebar a.ct-account-sidebar__link *,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar a.ct-account-sidebar__link * {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-sidebar .ct-account-sidebar__icon.dashicons::before,
+body.woocommerce-account .ct-account-sidebar .ct-account-sidebar__icon.dashicons::before,
+body.coachtribe-my-account-shell .ct-account-sidebar .ct-account-sidebar__icon.dashicons::before,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-sidebar .ct-account-sidebar__icon.dashicons::before {
+	text-decoration: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+/* Snelle-acties kaarten (<a>): geen theme-onderstreping op titel/tekst */
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:visited,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:hover,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:focus,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:active,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:visited,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:hover,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:focus,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:active,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:visited,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:hover,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:focus,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:active,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:visited,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:hover,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:focus,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:active {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card *,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card *,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card *,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card * {
+	text-decoration: none !important;
+	text-decoration-line: none !important;
+	-webkit-text-decoration: none !important;
+	border-bottom: none !important;
+	background-image: none !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-title,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-title,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-title,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-title {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-text,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-text,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-text,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__card-text {
+	color: #aaaaaa !important;
+	-webkit-text-fill-color: #aaaaaa;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__icon-ring,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-snella-icon-ring) !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:hover .ct-account-snella-acties__icon-ring,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card:focus .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-snella-icon-ring-hover) !important;
+}
+
+body.woocommerce-account .woocommerce-MyAccount-content .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__chevron,
+body.woocommerce-account .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__chevron,
+body.coachtribe-my-account-shell .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__chevron,
+body.coachtribe-my-account-shell .elementor-widget-container .ct-account-snella-acties a.ct-account-snella-acties__card .ct-account-snella-acties__chevron {
+	color: rgb(255, 77, 109) !important;
+}
+
+/* -------------------------------------------------------------------------
+   View subscription (/view-subscription/{id}/)
+   ------------------------------------------------------------------------- */
+.ct-account-view-sub {
+	max-width: 920px;
+}
+
+.ct-account-view-sub__back {
+	margin: 0 0 1.25rem;
+}
+
+.ct-account-view-sub__back-link {
+	color: var(--ct-color-accent);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.ct-account-view-sub__back-link:hover,
+.ct-account-view-sub__back-link:focus {
+	color: var(--ct-color-accent-soft);
+	text-decoration: underline;
+}
+
+.ct-account-view-sub__title {
+	margin: 0 0 1.25rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.ct-account-view-sub__card {
+	background: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+	padding: 1.35rem 1.5rem;
+	margin-bottom: 1.25rem;
+	box-shadow: var(--ct-shadow-card);
+}
+
+.ct-account-view-sub__card--error .ct-account-view-sub__message {
+	margin: 0.75rem 0 0;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-view-sub__details-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem 1rem;
+	margin-bottom: 1.25rem;
+}
+
+.ct-account-view-sub__plan-name {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 700;
+}
+
+.ct-account-view-sub__meta {
+	margin: 0;
+	display: grid;
+	gap: 0.85rem;
+}
+
+.ct-account-view-sub__meta-row {
+	display: grid;
+	grid-template-columns: minmax(0, 11rem) 1fr;
+	gap: 0.5rem 1rem;
+	align-items: baseline;
+}
+
+.ct-account-view-sub__meta-row dt {
+	margin: 0;
+	color: var(--ct-color-text-muted);
+	font-weight: 500;
+}
+
+.ct-account-view-sub__meta-row dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.ct-account-view-sub__section-title {
+	margin: 0 0 0.5rem;
+	font-size: 1.125rem;
+	font-weight: 700;
+}
+
+.ct-account-view-sub__section-intro,
+.ct-account-view-sub__empty,
+.ct-account-view-sub__plan-unavailable {
+	margin: 0 0 1rem;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-view-sub__plan-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1rem;
+}
+
+.ct-account-view-sub__plan-item {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.15rem 1.25rem;
+	border: 1px solid var(--ct-color-border);
+	border-radius: 12px;
+	background: #141414;
+}
+
+.ct-account-view-sub__plan-item.is-current {
+	border-color: var(--ct-color-accent);
+	box-shadow: 0 0 0 1px rgba(232, 38, 74, 0.35);
+}
+
+.ct-account-view-sub__current-badge {
+	display: inline-block;
+	margin-bottom: 0.5rem;
+	padding: 0.2rem 0.55rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--ct-color-accent);
+	border: 1px solid var(--ct-color-accent);
+	border-radius: 999px;
+}
+
+.ct-account-view-sub__plan-item-name {
+	margin: 0 0 0.35rem;
+	font-size: 1.0625rem;
+	font-weight: 700;
+}
+
+.ct-account-view-sub__plan-item-price {
+	margin: 0 0 0.65rem;
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-view-sub__plan-item-features {
+	font-size: 0.9375rem;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-view-sub__plan-item-features p {
+	margin: 0 0 0.5rem;
+}
+
+.ct-account-view-sub__plan-select {
+	align-self: flex-start;
+	text-decoration: none;
+}
+
+.ct-account-view-sub__cancel {
+	margin: 0.5rem 0 0;
+	text-align: center;
+}
+
+.ct-account-view-sub__cancel-link {
+	color: var(--ct-color-text-muted);
+	text-decoration: underline;
+	font-size: 0.9375rem;
+}
+
+.ct-account-view-sub__cancel-link:hover,
+.ct-account-view-sub__cancel-link:focus {
+	color: var(--ct-color-accent);
+}
+
+@media (max-width: 640px) {
+	.ct-account-view-sub__meta-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   Overzicht — modern SaaS dashboard layout
+   ------------------------------------------------------------------------- */
+
+.ct-account-sidebar--saas {
+	display: flex;
+	flex-direction: column;
+	background-color: #000000;
+	border-right-color: #1a1a1a;
+	padding-top: 0;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__hulp-slot {
+	display: none;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__item--instellingen-only {
+	display: none;
+}
+
+.ct-account--tab-instellingen .ct-account-sidebar--saas .ct-account-sidebar__item--instellingen-only {
+	display: list-item;
+}
+
+.ct-account--tab-instellingen .ct-account-sidebar--saas {
+	min-height: 100%;
+}
+
+.ct-account--tab-instellingen .ct-account-sidebar--saas .ct-account-sidebar__nav-drawer {
+	flex: 1 1 auto;
+}
+
+.ct-account--tab-instellingen .ct-account-sidebar--saas .ct-account-sidebar__hulp-slot {
+	display: block;
+	margin-top: auto;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__brand-row:not(.ct-account-sidebar__brand-row--no-logo) {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.75rem;
+	padding: 1.35rem 1.25rem 1.15rem;
+	border-bottom: 1px solid #1a1a1a;
+	flex-shrink: 0;
+	order: -1;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__brand-row--no-logo {
+	display: none;
+	padding: 0;
+	border-bottom: none;
+	flex-shrink: 0;
+	order: -1;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__logo {
+	display: inline-flex !important;
+	align-items: center;
+	flex-shrink: 0;
+	min-width: 0;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__logo-img {
+	display: block;
+	max-width: 100%;
+	max-height: 42px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	object-position: left center;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__nav-drawer {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__nav {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem 0.85rem 1.25rem;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__list {
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__item {
+	margin: 0;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__item--logout {
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__link {
+	align-items: center;
+	gap: 0.85rem;
+	min-height: 50px;
+	padding: 0.8rem 1rem;
+	border-left: none !important;
+	border-radius: 12px;
+	color: #ffffff !important;
+	background-color: transparent;
+	font-weight: 500;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__link:hover,
+.ct-account-sidebar--saas .ct-account-sidebar__link:focus {
+	background-color: rgba(255, 255, 255, 0.06);
+	color: #ffffff !important;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__link.is-active {
+	background-color: var(--ct-color-accent);
+	color: #ffffff !important;
+	box-shadow: none;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__link.is-active:hover,
+.ct-account-sidebar--saas .ct-account-sidebar__link.is-active:focus {
+	background-color: var(--ct-color-accent-soft);
+	color: #ffffff !important;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__link--logout:hover,
+.ct-account-sidebar--saas .ct-account-sidebar__link--logout:focus {
+	background-color: rgba(255, 255, 255, 0.06);
+	color: #ffffff !important;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	color: #ffffff;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__icon-svg {
+	display: block;
+	width: 22px;
+	height: 22px;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__icon.dashicons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	font-size: 20px;
+	line-height: 1;
+	margin: 0;
+	color: #ffffff;
+}
+
+.ct-account-sidebar--saas .ct-account-sidebar__label {
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.3;
+	color: inherit;
+}
+
+.ct-account-overzicht--saas {
+	display: flex;
+	flex-direction: column;
+	gap: 1.75rem;
+	width: 100%;
+}
+
+/* Overzicht — hide third-party language / translate widgets (Weglot, WPML, GTranslate, etc.) */
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .weglot-container,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #weglot_here,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [class*="weglot"],
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [id*="weglot"],
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .gtranslate_wrapper,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #gtranslate_wrapper,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #gt_float_wrapper,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .gt_switcher,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .goog-te-gadget,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .wpml-ls-statics-footer,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .wpml-ls-legacy-dropdown,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [class*="gtranslate"],
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [id*="gtranslate"],
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [class*="translate"]:not(.ct-account):not([class*="ct-account"]),
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [id*="translate"],
+.ct-account-overzicht--saas .weglot-container,
+.ct-account-overzicht--saas #weglot_here,
+.ct-account-overzicht--saas .gtranslate_wrapper,
+.ct-account-overzicht--saas [class*="weglot"],
+.ct-account-overzicht--saas [id*="weglot"] {
+	display: none !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+}
+
+/* —— Overzicht reference layout (subscription panel) —— */
+.ct-account-header--overzicht {
+	border-bottom: none;
+	padding-bottom: 0.75rem;
+}
+
+.ct-account-subscription--ref {
+	margin: 0;
+}
+
+.ct-subscription-panel {
+	background-color: #121212;
+	border: 1px solid #2a2a2a;
+	border-radius: 14px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+	overflow: hidden;
+}
+
+.ct-subscription-panel__head {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	padding: 1.5rem 2rem 1.25rem;
+}
+
+.ct-subscription-panel__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-subscription-panel__icon .ct-account-sub__icon-svg {
+	width: 1.35rem;
+	height: 1.35rem;
+}
+
+.ct-subscription-panel__title {
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: #ffffff;
+}
+
+.ct-account-subscription--ref .ct-overview-top,
+.ct-account-subscription--ref .ct-overview-top--ref {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 2rem 3.25rem;
+	align-items: center;
+	justify-items: start;
+	width: 100%;
+	max-width: none;
+	padding: 0.75rem 2rem 2rem;
+}
+
+.ct-account-subscription--ref .ct-subscription-card {
+	flex: 1;
+	min-width: 0;
+	width: auto;
+	max-width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.75rem;
+}
+
+.ct-account-subscription--ref .ct-profile-photo-right {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	min-width: 11rem;
+	flex-shrink: 0;
+	padding-right: 0.5rem;
+}
+
+.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+}
+
+.ct-account-subscription--ref .ct-profile-photo-right img,
+.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profiel__avatar-img {
+	width: 9.5rem;
+	height: 9.5rem;
+	border-radius: 50%;
+	object-fit: cover;
+	border: none;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-image--header {
+	width: 9.5rem;
+	height: 9.5rem;
+	border-radius: 50%;
+	overflow: hidden;
+	border: none;
+	background-color: var(--ct-bg-input);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-image__fallback,
+.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-image__fallback .avatar {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+}
+
+.ct-account-subscription--ref .ct-foto-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	padding: 0.45rem 0.85rem;
+	font-family: inherit;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 1.25;
+	color: #e8e8e8;
+	background-color: #1e1e1e;
+	border: 1px solid #3a3a3a;
+	border-radius: 8px;
+	cursor: pointer;
+	pointer-events: auto;
+	-webkit-appearance: none;
+	appearance: none;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-subscription--ref .ct-foto-btn:hover,
+.ct-account-subscription--ref .ct-foto-btn:focus {
+	color: #ffffff;
+	background-color: #282828;
+	border-color: #4a4a4a;
+	outline: none;
+}
+
+.ct-account-subscription--ref .ct-foto-btn__icon {
+	flex-shrink: 0;
+	color: #ffffff;
+}
+
+.ct-overview-top {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.ct-subscription-card {
+	flex: 1;
+	min-width: 0;
+}
+
+.ct-profile-photo-right {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	min-width: 130px;
+	flex-shrink: 0;
+}
+
+.ct-profile-photo-right .ct-account-profile-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.ct-profile-photo-right img,
+.ct-profile-photo-right .ct-account-profiel__avatar-img {
+	width: 110px;
+	height: 110px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid #e63946;
+}
+
+.ct-profile-photo-right .ct-account-profile-image--header {
+	width: 110px;
+	height: 110px;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 3px solid #e63946;
+	background-color: var(--ct-bg-input);
+}
+
+.ct-profile-photo-right .ct-account-profile-image__fallback,
+.ct-profile-photo-right .ct-account-profile-image__fallback .avatar {
+	width: 110px;
+	height: 110px;
+	border-radius: 50%;
+}
+
+.ct-foto-btn {
+	background: transparent;
+	border: none;
+	color: #e63946;
+	font-size: 13px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-family: inherit;
+	font-weight: 600;
+	padding: 0;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.ct-foto-btn:hover,
+.ct-foto-btn:focus {
+	color: #ff5a7a;
+	outline: none;
+}
+
+.ct-account-profile-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	flex-shrink: 0;
+}
+
+.ct-account-profile-header__figure {
+	position: relative;
+}
+
+.ct-account-profile-image--header {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 2px solid #333333;
+	background-color: var(--ct-bg-input);
+}
+
+.ct-account-profile-image--header .ct-account-profiel__avatar-img,
+.ct-account-profile-image--header .ct-account-profile-image__fallback,
+.ct-account-profile-image--header .ct-account-profile-image__fallback .avatar {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.ct-account-profile-header__change {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	padding: 0;
+	margin: 0;
+	font-family: inherit;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--ct-color-text-muted);
+	background: none;
+	border: none;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: color 0.2s ease;
+}
+
+.ct-account-profile-header__change:hover,
+.ct-account-profile-header__change:focus {
+	color: var(--ct-color-accent);
+	outline: none;
+}
+
+.ct-account-profile-header__change-icon {
+	flex-shrink: 0;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-profile-header__status {
+	max-width: 12rem;
+	text-align: center;
+}
+
+.ct-account-overzicht__main {
+	display: flex;
+	flex-direction: column;
+	gap: 1.75rem;
+	width: 100%;
+}
+
+.ct-account-subscription__card--saas {
+	padding: 1.5rem 1.75rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+	box-shadow: var(--ct-shadow-card);
+}
+
+.ct-account-subscription--ref .ct-subscription-info,
+.ct-account-subscription--ref .ct-subscription-info--ref-grid {
+	display: grid;
+	grid-template-columns: max-content 1.25rem minmax(0, max-content);
+	row-gap: 1rem;
+	column-gap: 0;
+	align-items: center;
+	justify-items: start;
+	width: max-content;
+	max-width: 100%;
+}
+
+.ct-account-subscription--ref .ct-info-row {
+	display: contents;
+	padding: 0;
+	margin: 0;
+	border-bottom: none !important;
+}
+
+.ct-account-subscription--ref .ct-label {
+	display: block;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: left;
+	white-space: nowrap;
+	padding-right: 1.15rem;
+	visibility: visible;
+	opacity: 1;
+}
+
+.ct-account-subscription--ref .ct-label::after {
+	content: none;
+}
+
+.ct-account-subscription--ref .ct-info-sep {
+	display: block;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1;
+	text-align: center;
+	justify-self: center;
+	width: 100%;
+	visibility: visible;
+	opacity: 1;
+}
+
+.ct-account-subscription--ref .ct-value {
+	display: block;
+	color: #ffffff;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.5;
+	text-align: left;
+	justify-self: start;
+	white-space: nowrap;
+	padding-left: 2.35rem;
+	min-width: 0;
+}
+
+.ct-account-subscription--ref .ct-value--payment {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: nowrap;
+	white-space: normal;
+}
+
+.ct-account-subscription--ref .ct-ideal-logo {
+	display: inline-flex;
+	align-items: center;
+	line-height: 0;
+	flex-shrink: 0;
+}
+
+.ct-account-subscription--ref .ct-account-sub__badge {
+	text-transform: none;
+	letter-spacing: 0;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	padding: 0.2rem 0.65rem;
+}
+
+.ct-account-subscription--ref .ct-account-sub__badge--active {
+	background-color: #152a20;
+	color: #4ade80;
+	border: 1px solid #2d5a3d;
+	border-radius: 999px;
+	padding: 0.22rem 0.7rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.ct-account-subscription--ref .ct-account-sub__badge--paused {
+	text-transform: none;
+	background-color: #4a3f24;
+	color: #e8d5a3;
+	border: 1px solid #8b7333;
+	border-radius: 999px;
+	padding: 0.22rem 0.7rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.ct-account-subscription--ref .ct-value--price .ct-value__period {
+	font-weight: 500;
+	color: #ffffff;
+}
+
+.ct-account-subscription--ref .ct-value--price .woocommerce-Price-amount,
+.ct-account-subscription--ref .ct-value--price .amount {
+	font-weight: 500;
+	color: #ffffff;
+}
+
+.ct-account-subscription--ref .ct-value--price .ct-value__period::before {
+	content: ' ';
+}
+
+.ct-account-subscription--ref .ct-ideal-logo__svg {
+	display: block;
+	width: 40px;
+	height: 22px;
+}
+
+.ct-account-subscription--ref .ct-value--payment {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+}
+
+.ct-subscription-info {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.ct-info-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 4px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ct-info-row:last-child {
+	border-bottom: none;
+}
+
+.ct-label {
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.ct-value {
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 600;
+	text-align: right;
+}
+
+.ct-value .woocommerce-Price-amount,
+.ct-value .amount {
+	color: inherit;
+}
+
+.ct-value .ct-account-sub__badge {
+	flex-shrink: 0;
+}
+
+.ct-account-subscription__cta {
+	margin-top: 1.25rem;
+}
+
+.ct-account-subscription--ref .ct-account-subscription__cta {
+	display: none;
+	margin-top: 0.5rem;
+	padding-top: 0.25rem;
+}
+
+.ct-account--tab-overzicht .ct-account-subscription--ref .ct-account-subscription__cta {
+	display: block;
+}
+
+.ct-account-upgrade-btn--ref {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.65rem;
+	width: auto;
+	max-width: none;
+	min-height: 48px;
+	margin: 0;
+	padding: 0.75rem 1.5rem;
+	font-family: inherit;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-align: left;
+	text-decoration: none !important;
+	border-radius: 10px;
+	border: none;
+	background: linear-gradient(135deg, #ff4d6d 0%, #e91e63 100%);
+	background-image: linear-gradient(135deg, #ff4d6d 0%, #e91e63 100%) !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+	transition:
+		background-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.15s ease;
+}
+
+.ct-account-upgrade-btn--ref:hover,
+.ct-account-upgrade-btn--ref:focus {
+	background-color: var(--ct-color-accent-soft);
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	outline: none;
+	box-shadow: 0 8px 24px rgba(255, 77, 109, 0.45);
+	transform: translateY(-1px);
+}
+
+.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__star-ring {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.65rem;
+	height: 1.65rem;
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__star-ring .ct-account-sub__icon-svg {
+	width: 0.85rem;
+	height: 0.85rem;
+	color: #ffffff;
+}
+
+.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__label {
+	flex: 0 1 auto;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__pro {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	font-weight: 700;
+}
+
+.ct-account-upgrade-btn--saas {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	max-width: 22rem;
+	min-height: 52px;
+	padding: 0.85rem 1.5rem;
+	font-family: inherit;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 10px;
+	border: 2px solid var(--ct-color-accent);
+	background-color: var(--ct-color-accent);
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	box-shadow: 0 6px 20px rgba(255, 77, 109, 0.35);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.15s ease;
+}
+
+.ct-account-upgrade-btn--saas:hover,
+.ct-account-upgrade-btn--saas:focus {
+	background-color: var(--ct-color-accent-soft);
+	border-color: var(--ct-color-accent-soft);
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	outline: none;
+	box-shadow: 0 8px 24px rgba(255, 77, 109, 0.45);
+	transform: translateY(-1px);
+}
+
+.ct-account-upgrade-btn--saas .ct-account-upgrade-btn__pro {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff;
+	font-weight: 700;
+}
+
+.ct-account-snella-acties--ref .ct-account-snella-acties__title.screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.ct-account-snella-acties--ref .ct-account-snella-acties__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
+	align-items: stretch;
+	width: 100%;
+}
+
+.ct-account-snella-acties__card--ref,
+.ct-account-snella-acties--saas.ct-account-snella-acties--ref .ct-account-snella-acties__card--saas {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
+	min-height: 5.5rem;
+	padding: 1.1rem 1.15rem;
+	text-align: left;
+	text-decoration: none !important;
+	background-color: #121212;
+	border: 1px solid #2a2a2a;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+	transition:
+		background-color 0.22s ease,
+		border-color 0.22s ease,
+		box-shadow 0.22s ease,
+		transform 0.2s ease;
+}
+
+.ct-account-snella-acties__card--ref:hover,
+.ct-account-snella-acties__card--ref:focus,
+.ct-account-snella-acties--saas.ct-account-snella-acties--ref .ct-account-snella-acties__card--saas:hover,
+.ct-account-snella-acties--saas.ct-account-snella-acties--ref .ct-account-snella-acties__card--saas:focus {
+	background-color: #1a1a1a;
+	border-color: #3a3a3a;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+	transform: translateY(-2px);
+	outline: none;
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__icon-ring,
+.ct-account-snella-acties--saas.ct-account-snella-acties--ref .ct-account-snella-acties__card--saas .ct-account-snella-acties__icon-ring {
+	width: 3.25rem;
+	height: 3.25rem;
+	margin: 0;
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__svg {
+	width: 1.35rem;
+	max-height: 1.35rem;
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 0.25rem;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-title {
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #ffffff;
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-text {
+	font-size: 0.8125rem;
+	font-weight: 400;
+	line-height: 1.4;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.ct-account-snella-acties__card--ref .ct-account-snella-acties__chevron {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-left: auto;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-support-footer--saas .ct-account-support-footer__row {
+	align-items: center;
+}
+
+.ct-account-support-footer--saas .ct-account-support-footer__message {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 400;
+	line-height: 1.55;
+	color: #c8c8c8;
+}
+
+@media screen and (max-width: 900px) {
+	.ct-account-snella-acties--ref .ct-account-snella-acties__grid,
+	.ct-account-snella-acties--saas .ct-account-snella-acties__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   Instellingen — modern SaaS account center
+   ------------------------------------------------------------------------- */
+
+.ct-account-body__tab-area:has(.ct-account-settings-center--saas) .ct-account-support-footer {
+	display: none;
+}
+
+.ct-account-settings-center--saas {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+	max-width: none;
+}
+
+.ct-account-settings-form--saas {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
+
+.ct-account-settings-card {
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+	box-shadow: var(--ct-shadow-card);
+	overflow: hidden;
+}
+
+.ct-account-settings-card--open .ct-account-settings-card__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	padding: 1.35rem 1.5rem 0;
+}
+
+.ct-account-settings-card__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.ct-account-settings-card__icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 10px;
+	background-color: rgba(255, 77, 109, 0.12);
+	color: var(--ct-color-accent);
+}
+
+.ct-account-settings-card__headings,
+.ct-account-settings-card__summary-text {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
+.ct-account-settings-card__title {
+	margin: 0;
+	font-size: 1.0625rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--ct-color-text);
+}
+
+.ct-account-settings-card__subtitle {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.45;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-settings-card__body {
+	padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.ct-account-settings-card__body--profile {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1.75rem;
+	padding: 0 1rem 1.5rem;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+}
+
+.ct-account-settings-card__avatar-col {
+	flex-shrink: 0;
+}
+
+.ct-account-settings-card__fields-col {
+	min-width: 0;
+	width: 100%;
+}
+
+.ct-account-settings-card__avatar-col .ct-account-profile-header {
+	align-items: center;
+}
+
+.ct-account-settings-center--saas .ct-account-settings-field__hint {
+	color: #a1a1a1;
+	text-align: left;
+}
+
+/* Profielgegevens — reference (full width, flat on black) */
+.ct-account-settings-card--profile-ref {
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	overflow: visible;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__header {
+	align-items: center;
+	padding: 0 1rem 1.25rem;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__body--profile,
+.ct-account-settings-profile-gegevens {
+	gap: 1.75rem;
+	padding: 0 1rem 1.5rem;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__avatar-col {
+	display: flex;
+	justify-content: center;
+	align-self: center;
+	width: 100%;
+	max-width: 100%;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__icon--profile {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	background: linear-gradient(180deg, #ff4b6b 0%, #e60040 100%);
+	color: #ffffff;
+	box-shadow: none;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-card__subtitle {
+	font-size: 0.9375rem;
+	color: #a1a1a1;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-field__label {
+	display: block;
+	margin: 0 0 0.5rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #a8a8a8;
+	text-align: left;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-field__hint {
+	margin: 0.45rem 0 0;
+	font-size: 0.8125rem;
+	color: #888888;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-field {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-fields-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.25rem;
+	width: 100%;
+	max-width: 100%;
+	align-items: start;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-field,
+.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(1),
+.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(2),
+.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(3) {
+	grid-column: 1;
+	grid-row: auto;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-field__label,
+.ct-account-settings-card--profile-ref .ct-account-settings-field__hint {
+	word-break: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
+	max-width: 100%;
+}
+
+@media screen and (min-width: 769px) {
+	.ct-account-settings-card__body--profile {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 2.5rem 3.5rem;
+		align-items: start;
+		padding: 0.5rem 2rem 2rem;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__header {
+		padding: 0 0 1.75rem;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__body--profile,
+	.ct-account-settings-profile-gegevens {
+		display: grid;
+		grid-template-columns: 10.5rem minmax(0, 1fr);
+		gap: 0 4rem;
+		padding: 0;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__avatar-col {
+		display: block;
+		align-self: auto;
+		width: auto;
+		max-width: none;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-fields-grid {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 1.5rem 3rem;
+	}
+
+	/* Volgorde: gebruikersnaam | e-mail (rij 1), telefoon | leeg (rij 2) */
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(1) {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(2) {
+		grid-column: 1;
+		grid-row: 2;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(3) {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: start;
+	}
+}
+
+.ct-account-settings-card--profile-ref .ct-account-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0.75rem 1rem;
+	font-size: 0.9375rem;
+	color: #ffffff;
+	background-color: #161616;
+	border: 1px solid #222222;
+	border-radius: 8px;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-input::placeholder {
+	color: #666666;
+	opacity: 1;
+}
+
+.ct-account-settings-card--profile-ref .ct-account-settings-username {
+	background-color: #161616;
+	color: #ffffff;
+	opacity: 1;
+	cursor: default;
+}
+
+.ct-account-profile-header--settings {
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.ct-account-profile-header--settings .ct-account-profile-header__figure {
+	position: relative;
+	width: 10.5rem;
+	height: 10.5rem;
+}
+
+.ct-account-profile-image--settings {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 10.5rem;
+	height: 10.5rem;
+	border-radius: 50%;
+	overflow: hidden;
+	border: none;
+	background: linear-gradient(180deg, #ff4b6b 0%, #e60040 55%, #c9184a 100%);
+	box-shadow: none;
+}
+
+.ct-account-profile-image--settings .ct-account-profiel__avatar-img,
+.ct-account-profile-image--settings .ct-account-profile-image__fallback,
+.ct-account-profile-image--settings .ct-account-profile-image__fallback .avatar {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.ct-account-profile-image__initial {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	font-size: 3.75rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.02em;
+	color: #ffffff;
+	user-select: none;
+}
+
+.ct-account-profile-header--settings .ct-account-profile-header__camera {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	margin: 0;
+	border: 2px solid #000000;
+	border-radius: 50%;
+	background-color: #1a1a1a;
+	color: #ffffff;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.ct-account-profile-header--settings .ct-account-profile-header__camera:hover,
+.ct-account-profile-header--settings .ct-account-profile-header__camera:focus {
+	background-color: #252525;
+	border-color: var(--ct-color-accent);
+	color: var(--ct-color-accent);
+	outline: none;
+}
+
+.ct-account-settings-fields-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.15rem 1.25rem;
+}
+
+.ct-account-settings-field--full {
+	grid-column: 1 / -1;
+}
+
+.ct-account-settings-fields-grid--billing {
+	margin-top: 0;
+}
+
+.ct-account-settings-billing-field {
+	opacity: 0.92;
+	cursor: default;
+	color: #cccccc;
+}
+
+.ct-account-settings-card--accordion {
+	display: block;
+}
+
+.ct-account-settings-card--accordion .ct-account-settings-card__summary {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	list-style: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.ct-account-settings-card--accordion .ct-account-settings-card__summary::-webkit-details-marker,
+.ct-account-settings-card--accordion .ct-account-settings-card__summary::marker {
+	display: none;
+	content: '';
+}
+
+.ct-account-settings-card--accordion .ct-account-settings-card__summary:hover,
+.ct-account-settings-card--accordion .ct-account-settings-card__summary:focus {
+	background-color: var(--ct-bg-card-hover);
+	outline: none;
+}
+
+.ct-account-settings-card__chevron {
+	flex-shrink: 0;
+	margin-left: auto;
+	font-size: 1.125rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--ct-color-text-muted);
+	transition: transform 0.22s ease, color 0.2s ease;
+}
+
+.ct-account-settings-card--accordion[open] .ct-account-settings-card__chevron {
+	transform: rotate(90deg);
+	color: var(--ct-color-accent);
+}
+
+.ct-account-settings-card--accordion .ct-account-settings-card__body {
+	padding-top: 0;
+	border-top: 1px solid var(--ct-color-border);
+}
+
+.ct-account-settings-card--password {
+	margin-top: 0;
+}
+
+/* Instellingen — rijen + opslaan (reference) */
+.ct-account-settings-stack--ref {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
+
+.ct-account-settings-card--row-ref {
+	width: 100%;
+	background-color: #181818;
+	border: 1px solid #2a2a2a;
+	border-radius: 12px;
+	box-shadow: none;
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-card__summary,
+.ct-account-settings-row-link.ct-account-settings-card--row-ref {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+}
+
+.ct-account-settings-row-link.ct-account-settings-card--row-ref {
+	text-decoration: none;
+	color: inherit;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ct-account-settings-row-link.ct-account-settings-card--row-ref:hover,
+.ct-account-settings-row-link.ct-account-settings-card--row-ref:focus {
+	background-color: #222222;
+	border-color: #333333;
+	color: inherit;
+	outline: none;
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-row-icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 50%;
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-card__title {
+	font-size: 1rem;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-card__subtitle {
+	font-size: 0.875rem;
+	color: #a1a1a1;
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-card__chevron {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	margin-left: auto;
+	color: var(--ct-color-accent);
+}
+
+.ct-account-settings-card--row-ref .ct-account-settings-card__chevron svg {
+	display: block;
+}
+
+.ct-account-settings-card--row-ref.ct-account-settings-card--accordion[open] .ct-account-settings-card__chevron svg {
+	transform: rotate(90deg);
+}
+
+.ct-account-settings-card--row-ref.ct-account-settings-card--accordion .ct-account-settings-card__body {
+	padding: 0 1.5rem 1.5rem;
+	border-top: 1px solid #2a2a2a;
+}
+
+.ct-account-settings-save-wrap--ref {
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	margin-top: 0.5rem;
+	padding: 0;
+}
+
+.ct-account-submit-button--ref-save {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.55rem;
+	min-width: 14rem;
+	padding: 0.9rem 1.85rem;
+	border: none;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #ff4d6d 0%, #e91e63 100%);
+	box-shadow: 0 8px 24px rgba(233, 30, 99, 0.45);
+}
+
+.ct-account-submit-button--ref-save .ct-account-submit-button__icon {
+	flex-shrink: 0;
+}
+
+.ct-account-submit-button--ref-save:hover,
+.ct-account-submit-button--ref-save:focus {
+	background: linear-gradient(135deg, #ff6b8a 0%, #ff4d6d 100%);
+	border: none;
+	box-shadow: 0 10px 28px rgba(233, 30, 99, 0.55);
+}
+
+.ct-account-settings-center--saas .ct-account-settings-footer {
+	display: none;
+}
+
+.ct-account-password-change-form--embedded {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 28rem;
+}
+
+.ct-account-settings-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 1.25rem 2rem;
+	margin-top: 0.5rem;
+	padding: 1.35rem 1.5rem;
+	background-color: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+	box-shadow: var(--ct-shadow-card);
+}
+
+.ct-account-settings-footer__help {
+	flex: 1 1 16rem;
+	min-width: 0;
+}
+
+.ct-account-settings-footer__help-title {
+	margin: 0 0 0.45rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--ct-color-text);
+}
+
+.ct-account-settings-footer__help-contact {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account-settings-footer__link {
+	font-weight: 600;
+	color: var(--ct-color-accent);
+	text-decoration: none;
+}
+
+.ct-account-settings-footer__link:hover,
+.ct-account-settings-footer__link:focus {
+	color: var(--ct-color-accent-soft);
+	text-decoration: underline;
+	outline: none;
+}
+
+.ct-account-settings-footer__sep {
+	margin: 0 0.45rem;
+	color: #555555;
+}
+
+.ct-account-settings-footer__actions {
+	flex-shrink: 0;
+}
+
+.ct-account-submit-button--saas {
+	width: auto;
+	min-width: 12.5rem;
+	max-width: none;
+	min-height: 52px;
+	padding: 0.85rem 1.75rem;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	border-radius: 10px;
+	border: 2px solid var(--ct-color-accent);
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+	box-shadow: 0 6px 20px rgba(255, 77, 109, 0.35);
+}
+
+.ct-account-submit-button--saas:hover,
+.ct-account-submit-button--saas:focus {
+	background-color: var(--ct-color-accent-soft);
+	border-color: var(--ct-color-accent-soft);
+	color: #ffffff;
+	outline: none;
+	box-shadow: 0 8px 24px rgba(255, 77, 109, 0.45);
+}
+
+.ct-account-submit-button--saas-outline {
+	width: 100%;
+	max-width: 16rem;
+	min-height: 48px;
+	background-color: transparent;
+	border: 2px solid var(--ct-color-border-strong);
+	color: var(--ct-color-text);
+	box-shadow: none;
+}
+
+.ct-account-submit-button--saas-outline:hover,
+.ct-account-submit-button--saas-outline:focus {
+	background-color: var(--ct-bg-card-hover);
+	border-color: var(--ct-color-accent);
+	color: var(--ct-color-text);
+}
+
+@media screen and (max-width: 768px) {
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__header {
+		padding: 0 1rem 1.25rem;
+	}
+
+	.ct-account-settings-card__body--profile,
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__body--profile {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+		grid-template-columns: none !important;
+		gap: 1.75rem !important;
+		padding: 0 1rem 1.5rem !important;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-card__avatar-col {
+		display: flex;
+		justify-content: center;
+		align-self: center;
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-fields-grid {
+		display: grid !important;
+		grid-template-columns: 1fr !important;
+		gap: 1.25rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-field,
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(1),
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(2),
+	.ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(3) {
+		grid-column: 1 !important;
+		grid-row: auto !important;
+		align-self: stretch;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-settings-field__label,
+	.ct-account-settings-card--profile-ref .ct-account-settings-field__hint {
+		word-break: break-word;
+		overflow-wrap: break-word;
+		white-space: normal;
+		max-width: 100%;
+		hyphens: auto;
+	}
+
+	.ct-account-settings-card--profile-ref .ct-account-input {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	.ct-account-settings-card__fields-col {
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.ct-account-settings-fields-grid,
+	.ct-account-settings-fields-grid--billing {
+		grid-template-columns: 1fr;
+	}
+
+	.ct-account-settings-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.ct-account-settings-footer__actions {
+		width: 100%;
+	}
+
+	.ct-account-submit-button--saas,
+	.ct-account-submit-button--ref-save {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.ct-account-settings-save-wrap--ref {
+		justify-content: stretch;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.ct-account-upgrade-btn--saas,
+	.ct-account-upgrade-btn--ref {
+		max-width: none;
+		width: 100%;
+	}
+
+	.ct-account-subscription--ref .ct-overview-top,
+	.ct-account-subscription--ref .ct-overview-top--ref,
+	.ct-account-overzicht--saas .ct-overview-top,
+	.ct-account-overzicht--saas .ct-overview-top--ref,
+	.ct-account .ct-overview-top--ref,
+	.ct-overview-top {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+		grid-template-columns: none !important;
+		gap: 1.5rem !important;
+		padding: 0.75rem 1rem 1.5rem !important;
+	}
+
+	.ct-account-subscription--ref .ct-subscription-card,
+	.ct-account-overzicht--saas .ct-subscription-card {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0;
+		order: 1;
+		position: relative;
+		z-index: 1;
+		isolation: isolate;
+		overflow: visible;
+	}
+
+	.ct-account-subscription--ref .ct-profile-photo-right,
+	.ct-account-overzicht--saas .ct-profile-photo-right,
+	.ct-profile-photo-right {
+		align-self: center;
+		min-width: 0;
+		width: 100%;
+		max-width: 100%;
+		padding-right: 0;
+		order: 2;
+		position: relative;
+		z-index: 2;
+		isolation: isolate;
+		margin-top: 0.25rem;
+	}
+
+	.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-header,
+	.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header {
+		position: relative;
+		z-index: 1;
+		max-width: 100%;
+	}
+
+	.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-header__figure,
+	.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header__figure {
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.ct-account-subscription--ref .ct-profile-photo-right .ct-foto-btn,
+	.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-header__change,
+	.ct-account-overzicht--saas .ct-profile-photo-right .ct-foto-btn,
+	.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header__change {
+		position: relative;
+		z-index: 2;
+	}
+
+	.ct-account-subscription--ref .ct-profile-photo-right .ct-account-profile-header__status,
+	.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header__status {
+		position: relative;
+		z-index: 2;
+		max-width: 100%;
+	}
+
+	.ct-account-subscription--ref .ct-subscription-info--ref-grid,
+	.ct-account-overzicht--saas .ct-subscription-info--ref-grid,
+	.ct-account .ct-subscription-info--ref-grid {
+		display: flex !important;
+		flex-direction: column !important;
+		gap: 1rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		align-items: stretch !important;
+	}
+
+	.ct-account-subscription--ref .ct-info-row,
+	.ct-account-overzicht--saas .ct-info-row,
+	.ct-account .ct-subscription-info--ref-grid .ct-info-row {
+		display: flex !important;
+		flex-direction: column !important;
+		gap: 0.2rem !important;
+		width: 100% !important;
+		min-width: 0;
+	}
+
+	.ct-account-subscription--ref .ct-info-sep,
+	.ct-account-overzicht--saas .ct-info-sep,
+	.ct-account .ct-subscription-info--ref-grid .ct-info-sep {
+		display: none !important;
+	}
+
+	.ct-account-subscription--ref .ct-label,
+	.ct-account-overzicht--saas .ct-label,
+	.ct-account .ct-subscription-info--ref-grid .ct-label {
+		display: block !important;
+		padding-right: 0 !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+		white-space: normal !important;
+		word-break: break-word;
+	}
+
+	.ct-account-subscription--ref .ct-value,
+	.ct-account-overzicht--saas .ct-value,
+	.ct-account .ct-subscription-info--ref-grid .ct-value {
+		padding-left: 0 !important;
+		text-align: left !important;
+		white-space: normal !important;
+		word-break: break-word;
+		overflow: visible !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0;
+	}
+
+	.ct-account-subscription--ref .ct-value--payment,
+	.ct-account-overzicht--saas .ct-value--payment,
+	.ct-account .ct-subscription-info--ref-grid .ct-value--payment {
+		flex-wrap: wrap !important;
+		align-items: flex-start !important;
+	}
+
+	.ct-account-subscription--ref .ct-value__text,
+	.ct-account-overzicht--saas .ct-value__text {
+		min-width: 0;
+		word-break: break-word;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ct-account *,
+	.ct-account *::before,
+	.ct-account *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* -------------------------------------------------------------------------
+   Overzicht reference — high-specificity overrides (theme / link rules)
+   ------------------------------------------------------------------------- */
+.ct-account-overzicht--saas .ct-account-subscription.ct-account-subscription--ref {
+	padding: 0;
+	margin: 0;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.ct-account-overzicht--saas .ct-account-subscription.ct-account-subscription--ref:hover {
+	background: transparent;
+	border-color: transparent;
+	box-shadow: none;
+}
+
+.ct-account-overzicht--saas .ct-subscription-panel {
+	background-color: #121212;
+	border: 1px solid #2a2a2a;
+	border-radius: 14px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.ct-account-overzicht--saas .ct-subscription-panel__head {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.85rem;
+	padding: 1.5rem 2rem 1.25rem;
+}
+
+.ct-account-overzicht--saas .ct-subscription-panel__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background-color: var(--ct-color-accent);
+	color: #ffffff;
+}
+
+.ct-account-overzicht--saas .ct-subscription-panel__title {
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+@media screen and (min-width: 769px) {
+	.ct-account-overzicht--saas .ct-overview-top,
+	.ct-account-overzicht--saas .ct-overview-top--ref,
+	.ct-account-subscription--ref .ct-overview-top,
+	.ct-account-subscription--ref .ct-overview-top--ref {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) auto !important;
+		gap: 2rem 3.25rem !important;
+		align-items: center !important;
+		justify-items: start !important;
+		width: 100%;
+		padding: 0.5rem 2rem 2.25rem !important;
+		flex-direction: unset;
+	}
+
+	.ct-account-overzicht--saas .ct-subscription-card,
+	.ct-account-subscription--ref .ct-subscription-card {
+		align-items: flex-start !important;
+		width: 100%;
+	}
+
+	.ct-account-overzicht--saas .ct-subscription-card,
+	.ct-account-subscription--ref .ct-subscription-card {
+		grid-column: 1;
+		min-width: 0;
+	}
+
+	.ct-account-overzicht--saas .ct-profile-photo-right,
+	.ct-account-subscription--ref .ct-profile-photo-right {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: center;
+		justify-self: center;
+		min-width: 12.5rem;
+	}
+}
+
+@media screen and (min-width: 769px) {
+	.ct-account-overzicht--saas .ct-subscription-info,
+	.ct-account-overzicht--saas .ct-subscription-info--ref-grid {
+		display: grid !important;
+		grid-template-columns: max-content 1.25rem minmax(0, max-content) !important;
+		row-gap: 1rem !important;
+		column-gap: 0 !important;
+		align-items: center !important;
+		justify-items: start !important;
+		width: max-content !important;
+		max-width: 100%;
+	}
+
+	.ct-account-overzicht--saas .ct-info-row {
+		display: contents !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		border-bottom: none !important;
+	}
+
+	.ct-account-overzicht--saas .ct-label {
+		display: block !important;
+		color: rgba(255, 255, 255, 0.62) !important;
+		font-size: 0.875rem !important;
+		font-weight: 400 !important;
+		line-height: 1.5 !important;
+		text-align: left !important;
+		padding-right: 1.15rem !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+
+	.ct-account-overzicht--saas .ct-label::after {
+		content: none !important;
+	}
+
+	.ct-account-overzicht--saas .ct-info-sep {
+		grid-column: 2;
+		color: #a8a8a8 !important;
+		font-size: 0.875rem;
+		line-height: 1;
+		text-align: center;
+	}
+
+	.ct-account-overzicht--saas .ct-value {
+		display: block;
+		color: #ffffff !important;
+		font-size: 0.9375rem !important;
+		font-weight: 600 !important;
+		line-height: 1.5;
+		text-align: left !important;
+		justify-self: start !important;
+		padding-left: 2.35rem !important;
+	}
+
+	.ct-account-overzicht--saas .ct-value--payment {
+		display: inline-flex !important;
+		align-items: center;
+		gap: 0.55rem;
+	}
+}
+
+.ct-account-overzicht--saas .ct-account-sub__badge--active {
+	background-color: #152a20 !important;
+	color: #4ade80 !important;
+	border: 1px solid #2d5a3d !important;
+	border-radius: 999px;
+	padding: 0.22rem 0.7rem;
+	font-weight: 600;
+}
+
+.ct-account-overzicht--saas .ct-account-sub__badge--paused {
+	text-transform: none;
+	background-color: #4a3f24 !important;
+	color: #e8d5a3 !important;
+	border: 1px solid #8b7333 !important;
+	border-radius: 999px !important;
+	padding: 0.22rem 0.7rem !important;
+	font-weight: 600;
+}
+
+.ct-account-overzicht--saas .ct-subscription-panel {
+	width: 100% !important;
+	max-width: none !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-upgrade-btn.ct-account-upgrade-btn--ref,
+.ct-account-overzicht--saas .ct-account-body .ct-account-upgrade-btn.ct-account-upgrade-btn--ref {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.65rem;
+	width: auto !important;
+	max-width: none !important;
+	min-height: 48px;
+	margin: 0;
+	padding: 0.7rem 1.35rem !important;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-align: left;
+	text-decoration: none !important;
+	border-radius: 8px !important;
+	border: none !important;
+	background-color: var(--ct-color-accent) !important;
+	background-image: none !important;
+	filter: none !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	box-shadow: 0 4px 16px rgba(255, 77, 109, 0.28) !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-upgrade-btn.ct-account-upgrade-btn--ref:hover,
+.ct-account-overzicht--saas .ct-account-body a.ct-account-upgrade-btn.ct-account-upgrade-btn--ref:focus,
+.ct-account-overzicht--saas .ct-account-body .ct-account-upgrade-btn.ct-account-upgrade-btn--ref:hover,
+.ct-account-overzicht--saas .ct-account-body .ct-account-upgrade-btn.ct-account-upgrade-btn--ref:focus {
+	background-color: var(--ct-color-accent-soft) !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	text-decoration: none !important;
+	box-shadow: 0 8px 24px rgba(255, 77, 109, 0.45);
+	transform: translateY(-1px);
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-upgrade-btn.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__label,
+.ct-account-overzicht--saas .ct-account-body a.ct-account-upgrade-btn.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__pro,
+.ct-account-overzicht--saas .ct-account-body .ct-account-upgrade-btn.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__label,
+.ct-account-overzicht--saas .ct-account-body .ct-account-upgrade-btn.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__pro,
+.ct-account-subscription--ref .ct-account-upgrade-btn--ref .ct-account-upgrade-btn__label,
+.ct-account-subscription--ref .ct-account-upgrade-btn--ref .ct-account-upgrade-btn__pro {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	font-weight: 700;
+	text-decoration: none !important;
+}
+
+.ct-account-subscription--ref .ct-account-subscription__cta {
+	margin-top: 1rem;
+}
+
+.ct-account-overzicht--saas .ct-account-upgrade-btn--ref .ct-account-upgrade-btn__star-ring {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.65rem;
+	height: 1.65rem;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+.ct-account-overzicht--saas .ct-profile-photo-right img,
+.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profiel__avatar-img,
+.ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-image--header {
+	width: 140px;
+	height: 140px;
+	border: none !important;
+}
+
+.ct-account-overzicht--saas .ct-foto-btn.ct-account-profile-header__change {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	padding: 0.45rem 0.85rem;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: #e8e8e8 !important;
+	background-color: #1e1e1e !important;
+	border: 1px solid #3a3a3a !important;
+	border-radius: 8px;
+	text-decoration: none !important;
+}
+
+.ct-account-overzicht--saas .ct-foto-btn.ct-account-profile-header__change:hover,
+.ct-account-overzicht--saas .ct-foto-btn.ct-account-profile-header__change:focus {
+	color: #ffffff !important;
+	background-color: #282828 !important;
+	border-color: #4a4a4a !important;
+}
+
+/* Vertaal-widgets op Overzicht verbergen */
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .gtranslate_wrapper,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #gt_float_wrapper,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .gt_float_switcher,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .goog-te-gadget-simple,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .goog-te-menu-value,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .skiptranslate.goog-te-gadget,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #google_translate_element2,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) [id^="gt_"],
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) .weglot-container,
+body.coachtribe-my-account-shell:has(.ct-account-overzicht--saas) #weglot_here {
+	display: none !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+	opacity: 0 !important;
+}
+
+/* Snelle acties — reference row (icon | titel + subtitel | chevron) */
+.ct-account-overzicht--saas .ct-account-snella-acties--ref .ct-account-snella-acties__grid {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref,
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--saas.ct-account-snella-acties__card--ref {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+	gap: 1rem !important;
+	min-height: 5.5rem;
+	padding: 1.1rem 1.15rem !important;
+	text-align: left !important;
+	text-decoration: none !important;
+	background-color: #121212 !important;
+	border: 1px solid #2a2a2a !important;
+	border-radius: 12px !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-title,
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-text {
+	color: inherit;
+	text-decoration: none !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-title {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	font-weight: 600 !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__card-text {
+	color: rgba(255, 255, 255, 0.55) !important;
+	-webkit-text-fill-color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__icon-ring {
+	background-color: var(--ct-color-accent) !important;
+	color: #ffffff !important;
+}
+
+.ct-account-overzicht--saas .ct-account-body a.ct-account-snella-acties__card--ref .ct-account-snella-acties__chevron {
+	color: var(--ct-color-accent) !important;
+	margin-left: auto !important;
+}
+
+@media screen and (max-width: 900px) {
+	.ct-account-overzicht--saas .ct-account-snella-acties--ref .ct-account-snella-acties__grid {
+		grid-template-columns: 1fr !important;
+	}
+}
+
+/* Sidebar navigatie — reference (witte icons, roze active pill) */
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas a.ct-account-sidebar__link {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	text-decoration: none !important;
+	border-left: none !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link.is-active,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas a.ct-account-sidebar__link.is-active {
+	background-color: var(--ct-color-accent) !important;
+	color: #ffffff !important;
+	border-radius: 12px !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link .ct-account-sidebar__icon,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link .ct-account-sidebar__label,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link .ct-account-sidebar__icon-svg {
+	color: #ffffff !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link--logout:hover,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__link--logout:focus {
+	color: #ffffff !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__list {
+	flex: 0 0 auto !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__item--logout {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__nav,
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__nav-drawer {
+	flex: 0 0 auto !important;
+}
+
+/* Site-header: CoachTribe-logo linksboven (niet verbergen) */
+body.coachtribe-my-account-shell .coachtribe-account-brand-logo,
+body.coachtribe-my-account-shell .custom-logo-link.coachtribe-account-brand-logo {
+	display: inline-flex !important;
+	align-items: center;
+	visibility: visible !important;
+	opacity: 1 !important;
+	max-height: none !important;
+	overflow: visible !important;
+}
+
+body.coachtribe-my-account-shell .coachtribe-account-brand-logo__img,
+body.coachtribe-my-account-shell .custom-logo.coachtribe-account-brand-logo__img,
+body.coachtribe-my-account-shell .elementor-widget-theme-site-logo .coachtribe-account-brand-logo__img,
+body.coachtribe-my-account-shell .elementor-widget-theme-site-logo img {
+	display: block !important;
+	max-height: 42px !important;
+	width: auto !important;
+	height: auto !important;
+	object-fit: contain;
+	object-position: left center;
+}
+
+/* Abonnementkaart — reference (geen gradient op upgrade, grid layout) */
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref,
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref:hover,
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref:focus,
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref:active {
+	background: rgb(255, 77, 109) !important;
+	background-color: rgb(255, 77, 109) !important;
+	background-image: none !important;
+	background-size: auto !important;
+	filter: none !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+	box-shadow: 0 4px 14px rgba(255, 77, 109, 0.28) !important;
+}
+
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref:hover,
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref:focus {
+	background: #ff5a7a !important;
+	background-color: #ff5a7a !important;
+}
+
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref *,
+.ct-account .ct-subscription-panel a.ct-account-upgrade-btn--ref .ct-account-upgrade-btn__label {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+}
+
+@media screen and (min-width: 769px) {
+	.ct-account .ct-overview-top--ref {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) auto !important;
+		gap: 2rem 3.25rem !important;
+		align-items: center !important;
+		justify-items: start !important;
+	}
+}
+
+.ct-account-overzicht--saas .ct-account-subscription--ref .ct-subscription-card {
+	gap: 1.75rem !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-overzicht--saas,
+body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-account-subscription--ref,
+body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-panel {
+	width: 100% !important;
+	max-width: none !important;
+}
+
+body.coachtribe-my-account-shell .ct-account--tab-overzicht .ct-account-subscription--ref .ct-account-subscription__cta {
+	display: block !important;
+}
+
+@media screen and (min-width: 769px) {
+	.ct-account .ct-subscription-info--ref-grid {
+		display: grid !important;
+		grid-template-columns: max-content 1.25rem minmax(0, max-content) !important;
+		row-gap: 1rem !important;
+		column-gap: 0 !important;
+		align-items: center !important;
+		justify-items: start !important;
+		width: max-content !important;
+		max-width: 100% !important;
+	}
+
+	.ct-account .ct-subscription-info--ref-grid .ct-info-row {
+		display: contents !important;
+		border-bottom: none !important;
+	}
+
+	.ct-account .ct-subscription-info--ref-grid .ct-label {
+		display: block !important;
+		color: rgba(255, 255, 255, 0.62) !important;
+		text-align: left !important;
+		padding-right: 1.15rem !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+
+	.ct-account .ct-subscription-info--ref-grid .ct-info-sep {
+		display: block !important;
+		text-align: center !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+		color: rgba(255, 255, 255, 0.62) !important;
+	}
+
+	.ct-account .ct-subscription-info--ref-grid .ct-value {
+		display: block !important;
+		text-align: left !important;
+		padding-left: 2.35rem !important;
+		color: #ffffff !important;
+		font-weight: 600 !important;
+	}
+}
+
+/* Instellingen — Profielgegevens full width (reference) */
+body.coachtribe-my-account-shell .ct-account-settings-center--saas,
+body.coachtribe-my-account-shell .ct-account-settings-form--saas,
+body.coachtribe-my-account-shell .ct-account-settings-card--profile-ref,
+body.coachtribe-my-account-shell .ct-account-settings-footer {
+	max-width: none !important;
+	width: 100% !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-body__tab-area:has(.ct-account-settings-center--saas) {
+	width: 100% !important;
+	max-width: none !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
+
+@media screen and (min-width: 769px) {
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-card__body--profile {
+		display: grid !important;
+		grid-template-columns: 10.5rem minmax(0, 1fr) !important;
+		gap: 0 4rem !important;
+		padding: 0 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-fields-grid {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+		gap: 1.5rem 3rem !important;
+		width: 100% !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(1) {
+		grid-column: 1 !important;
+		grid-row: 1 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(2) {
+		grid-column: 1 !important;
+		grid-row: 2 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(3) {
+		grid-column: 2 !important;
+		grid-row: 1 !important;
+	}
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field__label {
+	color: #a8a8a8 !important;
+	text-align: left !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-input {
+	background-color: #161616 !important;
+	border: 1px solid #222222 !important;
+	border-radius: 8px !important;
+	color: #ffffff !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .ct-account-input:focus {
+	border-color: #555555 !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .woocommerce-invalid .ct-account-input,
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .error .ct-account-input,
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .ct-account-settings-field--error .ct-account-input,
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .ct-account-input.is-error,
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-form .ct-account-input.error {
+	border-color: rgb(255, 77, 109) !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-profile-image--settings {
+	width: 10.5rem !important;
+	height: 10.5rem !important;
+	background: linear-gradient(180deg, #ff4b6b 0%, #e60040 55%, #c9184a 100%) !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-profile-header--settings .ct-account-profile-header__figure {
+	width: 10.5rem !important;
+	height: 10.5rem !important;
+}
+
+body.coachtribe-my-account-shell .ct-account--tab-instellingen .ct-account-sidebar--saas .ct-account-sidebar__hulp-slot {
+	display: block !important;
+	margin-top: auto !important;
+}
+
+body.coachtribe-my-account-shell .ct-account-sidebar--saas .ct-account-sidebar__item--instellingen-only {
+	display: none !important;
+}
+
+body.coachtribe-my-account-shell .ct-account--tab-instellingen .ct-account-sidebar--saas .ct-account-sidebar__item--instellingen-only {
+	display: list-item !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--row-ref {
+	background-color: #181818 !important;
+	border: 1px solid #2a2a2a !important;
+	border-radius: 12px !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--row-ref .ct-account-settings-row-icon {
+	background-color: var(--ct-color-accent) !important;
+	color: #ffffff !important;
+	border-radius: 50% !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--row-ref .ct-account-settings-card__chevron {
+	color: var(--ct-color-accent) !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-settings-save-wrap--ref {
+	display: flex !important;
+	justify-content: flex-end !important;
+	width: 100% !important;
+}
+
+body.coachtribe-my-account-shell .ct-account .ct-account-submit-button--ref-save {
+	display: inline-flex !important;
+	border: none !important;
+	background: linear-gradient(135deg, #ff4d6d 0%, #e91e63 100%) !important;
+	box-shadow: 0 8px 24px rgba(233, 30, 99, 0.45) !important;
+}
+
+/* Huidig abonnement — mobile layout (overrides theme / late specificity rules) */
+@media screen and (max-width: 768px) {
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-panel__head {
+		padding: 1.25rem 1rem 1rem;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-overview-top--ref,
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-overview-top,
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-overview-top--ref {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+		grid-template-columns: none !important;
+		gap: 1.5rem !important;
+		padding: 0.75rem 1rem 1.5rem !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-card,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-card {
+		width: 100% !important;
+		max-width: 100% !important;
+		order: 1;
+		overflow: visible;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-profile-photo-right,
+	body.coachtribe-my-account-shell .ct-account .ct-profile-photo-right {
+		order: 2;
+		width: 100%;
+		max-width: 100%;
+		position: relative;
+		isolation: isolate;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-info--ref-grid,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-info--ref-grid {
+		display: flex !important;
+		flex-direction: column !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		gap: 1rem !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-info--ref-grid .ct-info-row,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-info--ref-grid .ct-info-row {
+		display: flex !important;
+		flex-direction: column !important;
+		width: 100% !important;
+		min-width: 0;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-info--ref-grid .ct-info-sep,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-info--ref-grid .ct-info-sep {
+		display: none !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-info--ref-grid .ct-label,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-info--ref-grid .ct-label {
+		white-space: normal !important;
+		padding-right: 0 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-subscription-info--ref-grid .ct-value,
+	body.coachtribe-my-account-shell .ct-account .ct-subscription-info--ref-grid .ct-value {
+		white-space: normal !important;
+		word-break: break-word;
+		padding-left: 0 !important;
+		overflow: visible !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		color: #ffffff !important;
+		-webkit-text-fill-color: #ffffff !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header,
+	body.coachtribe-my-account-shell .ct-account .ct-profile-photo-right .ct-account-profile-header {
+		position: relative;
+		z-index: 1;
+	}
+
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-profile-photo-right .ct-foto-btn,
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header__change,
+	body.coachtribe-my-account-shell .ct-account-overzicht--saas .ct-profile-photo-right .ct-account-profile-header__status,
+	body.coachtribe-my-account-shell .ct-account .ct-profile-photo-right .ct-foto-btn,
+	body.coachtribe-my-account-shell .ct-account .ct-profile-photo-right .ct-account-profile-header__change,
+	body.coachtribe-my-account-shell .ct-account .ct-profile-photo-right .ct-account-profile-header__status {
+		position: relative;
+		z-index: 2;
+	}
+
+	/* Instellingen — Profielgegevens mobile */
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-card__header {
+		padding: 0 1rem 1.25rem !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-card__body--profile {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+		grid-template-columns: none !important;
+		gap: 1.75rem !important;
+		padding: 0 1rem 1.5rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-card__avatar-col {
+		display: flex !important;
+		justify-content: center !important;
+		align-self: center !important;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-card__fields-col {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-fields-grid {
+		display: grid !important;
+		grid-template-columns: 1fr !important;
+		gap: 1.25rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(1),
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(2),
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field:nth-child(3) {
+		grid-column: 1 !important;
+		grid-row: auto !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field__label,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-settings-field__hint {
+		word-break: break-word !important;
+		overflow-wrap: break-word !important;
+		white-space: normal !important;
+		max-width: 100% !important;
+		hyphens: auto;
+	}
+
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-card--profile-ref .ct-account-input {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		box-sizing: border-box !important;
+	}
+
+	/* Profielgegevens — force single column (theme / stale cache overrides) */
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens,
+	.ct-account-mobile .ct-account-settings-profile-gegevens,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+		grid-template-columns: none !important;
+		grid-template-rows: none !important;
+		gap: 1.75rem !important;
+		padding: 0 1rem 1.5rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-card__avatar-col,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-card__avatar-col,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-card__avatar-col {
+		display: flex !important;
+		justify-content: center !important;
+		align-self: center !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		flex-shrink: 0 !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-card__fields-col,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-card__fields-col,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-card__fields-col {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-fields-grid,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-fields-grid,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-fields-grid {
+		display: grid !important;
+		grid-template-columns: 1fr !important;
+		gap: 1.25rem !important;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field,
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(1),
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(2),
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(3),
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(1),
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(2),
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(3),
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(1),
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(2),
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field:nth-child(3) {
+		grid-column: 1 !important;
+		grid-row: auto !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field__label,
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-settings-field__hint,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field__label,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-settings-field__hint,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field__label,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-settings-field__hint {
+		word-break: break-word !important;
+		overflow-wrap: break-word !important;
+		white-space: normal !important;
+		max-width: 100% !important;
+	}
+
+	.ct-account.ct-account--tab-instellingen .ct-account-settings-profile-gegevens .ct-account-input,
+	.ct-account-mobile .ct-account-settings-profile-gegevens .ct-account-input,
+	body.coachtribe-my-account-shell .ct-account .ct-account-settings-profile-gegevens .ct-account-input {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		box-sizing: border-box !important;
+	}
+}
