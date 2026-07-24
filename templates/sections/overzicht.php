@@ -13,6 +13,7 @@ $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 	<div class="ct-account-overzicht__main">
 		<?php
 		include $ct_sections_dir . 'subscription.php';
+		include $ct_sections_dir . 'profiel.php';
 		include $ct_sections_dir . 'snelle-acties.php';
 		?>
 	</div>

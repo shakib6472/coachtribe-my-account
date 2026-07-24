@@ -1,25 +1,48 @@
 <?php
 /**
- * Sectie: Snelle acties (drie kaarten — horizontale rij, ref. layout).
+ * Sectie: Snelle acties (drie kaarten — horizontale rij, ref. layout). Member-type-aware:
+ *   - woocommerce : invoices, change payment method, cancel subscription (in-app).
+ *   - plug_and_pay: all three link to the external Plug&Pay portal.
+ *   - gratis      : no quick actions (nothing rendered).
  *
  * @package CoachTribe_My_Account
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$ct_quick_facturen = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'facturen' ) : home_url( '/' );
-$ct_quick_betalen  = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'payment-methods' ) : home_url( '/' );
-$ct_quick_abonnement = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'subscriptions' ) : home_url( '/' );
+$ct_member_type = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type() : 'woocommerce';
 
-$ct_quick_facturen   = apply_filters( 'coachtribe_my_account_quick_link_facturen', $ct_quick_facturen );
-$ct_quick_betalen    = apply_filters( 'coachtribe_my_account_quick_link_payment_methods', $ct_quick_betalen );
-$ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscriptions', $ct_quick_abonnement );
+// Free members have no billing or payment actions.
+if ( 'gratis' === $ct_member_type ) {
+	return;
+}
+
+$ct_plugandpay_url = function_exists( 'coachtribe_my_account_plugandpay_url' ) ? coachtribe_my_account_plugandpay_url() : '';
+$ct_quick_external = ( 'plug_and_pay' === $ct_member_type && '' !== $ct_plugandpay_url );
+
+if ( $ct_quick_external ) {
+	// Plug&Pay members manage invoices, payment and cancellation on the external portal.
+	$ct_quick_facturen   = $ct_plugandpay_url;
+	$ct_quick_betalen    = $ct_plugandpay_url;
+	$ct_quick_abonnement = $ct_plugandpay_url;
+} else {
+	$ct_quick_facturen   = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'facturen' ) : home_url( '/' );
+	$ct_quick_betalen    = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'payment-methods' ) : home_url( '/' );
+	$ct_quick_abonnement = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'subscriptions' ) : home_url( '/' );
+
+	$ct_quick_facturen   = apply_filters( 'coachtribe_my_account_quick_link_facturen', $ct_quick_facturen );
+	$ct_quick_betalen    = apply_filters( 'coachtribe_my_account_quick_link_payment_methods', $ct_quick_betalen );
+	$ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscriptions', $ct_quick_abonnement );
+}
+
+// External links open in a new tab and must not be intercepted by the SPA tab router.
+$ct_ext_attrs = ' target="_blank" rel="noopener noreferrer"';
 ?>
 <section class="ct-account-snella-acties ct-account-snella-acties--saas ct-account-snella-acties--ref" aria-labelledby="ct-account-snella-acties-title">
 	<h2 id="ct-account-snella-acties-title" class="ct-account-snella-acties__title screen-reader-text"><?php esc_html_e( 'Snelle Acties', 'coachtribe-my-account' ); ?></h2>
 
 	<div class="ct-account-snella-acties__grid">
-		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_facturen ); ?>" data-ct-tab="facturen">
+		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_facturen ); ?>"<?php echo $ct_quick_external ? $ct_ext_attrs : ' data-ct-tab="facturen"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="ct-account-snella-acties__icon-ring" aria-hidden="true">
 				<svg class="ct-account-snella-acties__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
 					<path d="M12 3v12m0 0l4-4m-4 4L8 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -37,7 +60,7 @@ $ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscrip
 			</span>
 		</a>
 
-		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_betalen ); ?>" data-ct-tab="payment-methods">
+		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_betalen ); ?>"<?php echo $ct_quick_external ? $ct_ext_attrs : ' data-ct-tab="payment-methods"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="ct-account-snella-acties__icon-ring" aria-hidden="true">
 				<svg class="ct-account-snella-acties__svg" width="24" height="24" viewBox="0 0 40 40" focusable="false" xmlns="http://www.w3.org/2000/svg">
 					<rect x="6" y="12" width="28" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -56,7 +79,7 @@ $ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscrip
 			</span>
 		</a>
 
-		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_abonnement ); ?>" data-ct-tab="subscriptions">
+		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_abonnement ); ?>"<?php echo $ct_quick_external ? $ct_ext_attrs : ' data-ct-tab="subscriptions"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="ct-account-snella-acties__icon-ring" aria-hidden="true">
 				<svg class="ct-account-snella-acties__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
 					<path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -64,8 +87,8 @@ $ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscrip
 				</svg>
 			</span>
 			<span class="ct-account-snella-acties__content">
-				<span class="ct-account-snella-acties__card-title"><?php esc_html_e( 'Abonnement beheren', 'coachtribe-my-account' ); ?></span>
-				<span class="ct-account-snella-acties__card-text"><?php esc_html_e( 'Wijzig of annuleer je abonnement', 'coachtribe-my-account' ); ?></span>
+				<span class="ct-account-snella-acties__card-title"><?php esc_html_e( 'Abonnement opzeggen', 'coachtribe-my-account' ); ?></span>
+				<span class="ct-account-snella-acties__card-text"><?php esc_html_e( 'Annuleer hier je abonnement', 'coachtribe-my-account' ); ?></span>
 			</span>
 			<span class="ct-account-snella-acties__chevron" aria-hidden="true">
 				<svg class="ct-account-snella-acties__chevron-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">

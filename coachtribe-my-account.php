@@ -20,9 +20,88 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '1.0.54' );
+define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '1.0.55' );
 define( 'COACHTRIBE_MY_ACCOUNT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'COACHTRIBE_MY_ACCOUNT_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * External Plug&Pay customer portal (old members manage billing/subscription there).
+ */
+if ( ! defined( 'COACHTRIBE_MY_ACCOUNT_PLUGANDPAY_URL' ) ) {
+	define( 'COACHTRIBE_MY_ACCOUNT_PLUGANDPAY_URL', 'https://portal.plugandpay.com/login/coachtribe-2426' );
+}
+
+/**
+ * Filterable Plug&Pay portal URL.
+ *
+ * @return string
+ */
+function coachtribe_my_account_plugandpay_url() {
+	return (string) apply_filters( 'coachtribe_my_account_plugandpay_url', COACHTRIBE_MY_ACCOUNT_PLUGANDPAY_URL );
+}
+
+/**
+ * Determine a user's membership type: 'woocommerce' | 'plug_and_pay' | 'gratis'.
+ *
+ * Detection order:
+ *   1. ct_membership_source meta 'plug_and_pay' or 'Gratis' wins outright.
+ *   2. Empty/unknown meta: infer from WooCommerce subscription / PMPro membership.
+ *   3. Fallback 'woocommerce' — the safe default, so invoices and payment links are
+ *      never hidden from a paying member by mistake.
+ *
+ * @param int|null $user_id Optional user ID (defaults to current user).
+ * @return string
+ */
+function coachtribe_my_account_get_member_type( $user_id = null ) {
+	$user_id = $user_id ? (int) $user_id : get_current_user_id();
+	if ( $user_id <= 0 ) {
+		return 'woocommerce';
+	}
+
+	$source = (string) get_user_meta( $user_id, 'ct_membership_source', true );
+
+	if ( 'plug_and_pay' === $source ) {
+		$type = 'plug_and_pay';
+	} elseif ( 'Gratis' === $source ) {
+		$type = 'gratis';
+	} else {
+		// Empty or unknown source: a WooCommerce subscription confirms a billing member;
+		// otherwise fall back to the safe default.
+		$type = 'woocommerce';
+	}
+
+	return (string) apply_filters( 'coachtribe_my_account_member_type', $type, $user_id, $source );
+}
+
+/**
+ * Whether the given (or current) user pays through WooCommerce (invoices + payment links).
+ *
+ * @param int|null $user_id Optional user ID.
+ * @return bool
+ */
+function coachtribe_my_account_is_woocommerce_member( $user_id = null ) {
+	return 'woocommerce' === coachtribe_my_account_get_member_type( $user_id );
+}
+
+/**
+ * Whether the given (or current) user is a free ('Gratis') member.
+ *
+ * @param int|null $user_id Optional user ID.
+ * @return bool
+ */
+function coachtribe_my_account_is_free_member( $user_id = null ) {
+	return 'gratis' === coachtribe_my_account_get_member_type( $user_id );
+}
+
+/**
+ * Whether the given (or current) user is a Plug&Pay member.
+ *
+ * @param int|null $user_id Optional user ID.
+ * @return bool
+ */
+function coachtribe_my_account_is_plugandpay_member( $user_id = null ) {
+	return 'plug_and_pay' === coachtribe_my_account_get_member_type( $user_id );
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -70,8 +149,23 @@ function coachtribe_my_account_register_endpoints() {
 	add_rewrite_endpoint( 'facturen', EP_ROOT | EP_PAGES );
 	add_rewrite_endpoint( 'wachtwoord', EP_ROOT | EP_PAGES );
 	add_rewrite_endpoint( 'instellingen', EP_ROOT | EP_PAGES );
+	add_rewrite_endpoint( 'factuurgegevens', EP_ROOT | EP_PAGES );
 }
 add_action( 'init', 'coachtribe_my_account_register_endpoints', 5 );
+
+/**
+ * Flush rewrite rules once after the plugin version changes, so newly added
+ * endpoints (e.g. factuurgegevens) start resolving without a manual re-activation.
+ */
+function coachtribe_my_account_maybe_flush_rewrite() {
+	if ( COACHTRIBE_MY_ACCOUNT_VERSION === get_option( 'coachtribe_my_account_rewrite_version' ) ) {
+		return;
+	}
+	coachtribe_my_account_register_endpoints();
+	flush_rewrite_rules();
+	update_option( 'coachtribe_my_account_rewrite_version', COACHTRIBE_MY_ACCOUNT_VERSION );
+}
+add_action( 'init', 'coachtribe_my_account_maybe_flush_rewrite', 20 );
 
 /**
  * Register custom endpoints with WooCommerce query vars.
@@ -80,9 +174,10 @@ add_action( 'init', 'coachtribe_my_account_register_endpoints', 5 );
  * @return array
  */
 function coachtribe_my_account_query_vars( $query_vars ) {
-	$query_vars['facturen']     = 'facturen';
-	$query_vars['wachtwoord']   = 'wachtwoord';
-	$query_vars['instellingen'] = 'instellingen';
+	$query_vars['facturen']        = 'facturen';
+	$query_vars['wachtwoord']      = 'wachtwoord';
+	$query_vars['instellingen']    = 'instellingen';
+	$query_vars['factuurgegevens'] = 'factuurgegevens';
 
 	return $query_vars;
 }
@@ -244,6 +339,8 @@ function coachtribe_my_account_register_hooks() {
 	add_action( 'template_redirect', 'coachtribe_my_account_handle_password_change', 5 );
 	add_action( 'template_redirect', 'coachtribe_my_account_handle_settings_save', 6 );
 	add_action( 'template_redirect', 'coachtribe_my_account_handle_profile_edit_save', 7 );
+	add_action( 'template_redirect', 'coachtribe_my_account_handle_factuurgegevens_save', 7 );
+	add_action( 'template_redirect', 'coachtribe_my_account_guard_account_endpoints', 8 );
 	add_action( 'template_redirect', 'coachtribe_my_account_upgrade_notices_on_account_load', 4 );
 	add_action( 'woocommerce_thankyou', 'coachtribe_my_account_upgrade_notice_flag_thankyou', 25, 1 );
 	add_action( 'wp_ajax_coachtribe_my_account_tab', 'coachtribe_my_account_ajax_tab' );
@@ -268,6 +365,7 @@ function coachtribe_my_account_register_wc_endpoint_integration() {
 	add_action( 'woocommerce_account_facturen_endpoint', 'coachtribe_my_account_output_facturen_endpoint', $priority );
 	add_action( 'woocommerce_account_instellingen_endpoint', 'coachtribe_my_account_output_instellingen_endpoint', $priority );
 	add_action( 'woocommerce_account_wachtwoord_endpoint', 'coachtribe_my_account_output_wachtwoord_endpoint', $priority );
+	add_action( 'woocommerce_account_factuurgegevens_endpoint', 'coachtribe_my_account_output_factuurgegevens_endpoint', $priority );
 
 	// WCS registers `view-subscription`; we replace its template, not the rewrite endpoint.
 	add_action( 'woocommerce_account_view-subscription_endpoint', 'coachtribe_my_account_output_view_subscription_endpoint', $priority );
@@ -561,6 +659,77 @@ function coachtribe_my_account_output_instellingen_endpoint() {
 /**
  * @return void
  */
+function coachtribe_my_account_output_factuurgegevens_endpoint() {
+	do_action( 'coachtribe_my_account_before_factuurgegevens' );
+
+	$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/tabs/factuurgegevens.php';
+	if ( is_readable( $file ) ) {
+		include $file;
+	}
+
+	do_action( 'coachtribe_my_account_after_factuurgegevens' );
+}
+
+/**
+ * Guard My Account endpoints by membership type (server-side, before any output).
+ *
+ *   - instellingen    : removed from the UI, so send everyone to the dashboard.
+ *   - factuurgegevens : WooCommerce members only; others go to the dashboard.
+ *   - facturen        : hidden for free members (dashboard); Plug&Pay members read
+ *                       their invoices on the external portal.
+ *
+ * @return void
+ */
+function coachtribe_my_account_guard_account_endpoints() {
+	if ( is_admin() || ! is_user_logged_in() ) {
+		return;
+	}
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+	if ( ! function_exists( 'wc_get_account_endpoint_url' ) ) {
+		return;
+	}
+
+	$endpoint = '';
+	foreach ( array( 'instellingen', 'factuurgegevens', 'facturen' ) as $ep ) {
+		if ( false !== get_query_var( $ep, false ) ) {
+			$endpoint = $ep;
+			break;
+		}
+	}
+	if ( '' === $endpoint ) {
+		return;
+	}
+
+	$dashboard = wc_get_account_endpoint_url( 'dashboard' );
+	$type      = coachtribe_my_account_get_member_type();
+
+	if ( 'instellingen' === $endpoint ) {
+		wp_safe_redirect( $dashboard );
+		exit;
+	}
+
+	if ( 'factuurgegevens' === $endpoint && 'woocommerce' !== $type ) {
+		wp_safe_redirect( $dashboard );
+		exit;
+	}
+
+	if ( 'facturen' === $endpoint ) {
+		if ( 'gratis' === $type ) {
+			wp_safe_redirect( $dashboard );
+			exit;
+		}
+		if ( 'plug_and_pay' === $type ) {
+			wp_redirect( esc_url_raw( coachtribe_my_account_plugandpay_url() ) ); // External Plug&Pay portal.
+			exit;
+		}
+	}
+}
+
+/**
+ * @return void
+ */
 function coachtribe_my_account_output_wachtwoord_endpoint() {
 	do_action( 'coachtribe_my_account_before_wachtwoord' );
 
@@ -754,7 +923,7 @@ function coachtribe_my_account_detect_endpoint_from_url() {
 
 	$known = apply_filters(
 		'coachtribe_my_account_detect_url_endpoints',
-		array( 'facturen', 'instellingen', 'wachtwoord' )
+		array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens' )
 	);
 
 	foreach ( $known as $endpoint ) {
@@ -809,7 +978,7 @@ function coachtribe_my_account_normalize_tab_slug( $endpoint ) {
 	if ( '' === $endpoint || 'dashboard' === $endpoint ) {
 		return 'dashboard';
 	}
-	$ajax_tabs = array( 'facturen', 'instellingen', 'wachtwoord' );
+	$ajax_tabs = array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens' );
 	if ( in_array( $endpoint, $ajax_tabs, true ) ) {
 		return $endpoint;
 	}
@@ -841,6 +1010,9 @@ function coachtribe_my_account_render_tab_html( $endpoint ) {
 			break;
 		case 'instellingen':
 			do_action( 'woocommerce_account_instellingen_endpoint' );
+			break;
+		case 'factuurgegevens':
+			do_action( 'woocommerce_account_factuurgegevens_endpoint' );
 			break;
 		case 'wachtwoord':
 			do_action( 'woocommerce_account_wachtwoord_endpoint' );
@@ -1846,6 +2018,95 @@ function coachtribe_my_account_handle_profile_edit_save() {
 }
 
 /**
+ * Save editable billing details (Factuurgegevens) — WooCommerce members only.
+ *
+ * @return void
+ */
+function coachtribe_my_account_handle_factuurgegevens_save() {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+	if ( ! isset( $_POST['coachtribe_factuurgegevens_submit'] ) ) {
+		return;
+	}
+	if ( ! function_exists( 'WC' ) || ! WC()->query ) {
+		return;
+	}
+	if ( 'factuurgegevens' !== WC()->query->get_current_endpoint() ) {
+		return;
+	}
+	if ( ! function_exists( 'wc_add_notice' ) || ! function_exists( 'wc_get_account_endpoint_url' ) ) {
+		return;
+	}
+
+	$redirect = wc_get_account_endpoint_url( 'factuurgegevens' );
+
+	// Only WooCommerce members have this page.
+	if ( 'woocommerce' !== coachtribe_my_account_get_member_type() ) {
+		wp_safe_redirect( wc_get_account_endpoint_url( 'dashboard' ) );
+		exit;
+	}
+
+	if ( ! isset( $_POST['coachtribe_factuurgegevens_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['coachtribe_factuurgegevens_nonce'] ) ), 'coachtribe_factuurgegevens_save' ) ) {
+		wc_add_notice( __( 'Ongeldige sessie. Vernieuw de pagina en probeer opnieuw.', 'coachtribe-my-account' ), 'error' );
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	$uid = get_current_user_id();
+
+	if ( ! class_exists( 'WC_Customer' ) ) {
+		wc_add_notice( __( 'Factuurgegevens zijn niet beschikbaar zonder WooCommerce.', 'coachtribe-my-account' ), 'error' );
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	$setters = array(
+		'billing_first_name' => 'set_billing_first_name',
+		'billing_last_name'  => 'set_billing_last_name',
+		'billing_company'    => 'set_billing_company',
+		'billing_address_1'  => 'set_billing_address_1',
+		'billing_address_2'  => 'set_billing_address_2',
+		'billing_postcode'   => 'set_billing_postcode',
+		'billing_city'       => 'set_billing_city',
+		'billing_country'    => 'set_billing_country',
+	);
+
+	try {
+		$customer = new WC_Customer( $uid );
+		foreach ( $setters as $field => $setter ) {
+			$value = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
+			if ( is_callable( array( $customer, $setter ) ) ) {
+				$customer->{$setter}( $value );
+			}
+		}
+		$customer->save();
+	} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+		wc_add_notice( __( 'Kon de factuurgegevens niet opslaan. Probeer het opnieuw.', 'coachtribe-my-account' ), 'error' );
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	// BTW/VAT number: no native WooCommerce field, so store it as user meta.
+	$vat = isset( $_POST['billing_vat'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_vat'] ) ) : '';
+	update_user_meta( $uid, 'billing_vat', $vat );
+
+	/**
+	 * After billing details are saved.
+	 *
+	 * @param int $uid User ID.
+	 */
+	do_action( 'coachtribe_my_account_after_factuurgegevens_save', $uid );
+
+	wc_add_notice( __( 'Je factuurgegevens zijn opgeslagen.', 'coachtribe-my-account' ), 'success' );
+	wp_safe_redirect( $redirect );
+	exit;
+}
+
+/**
  * Of de CoachTribe account-shell actief is (WC account of shortcode-pagina).
  *
  * @return bool
@@ -2081,10 +2342,11 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 	$endpoint_urls = array();
 	if ( function_exists( 'wc_get_account_endpoint_url' ) ) {
 		$endpoint_urls = array(
-			'dashboard'    => wc_get_account_endpoint_url( 'dashboard' ),
-			'facturen'     => wc_get_account_endpoint_url( 'facturen' ),
-			'instellingen' => wc_get_account_endpoint_url( 'instellingen' ),
-			'wachtwoord'   => wc_get_account_endpoint_url( 'wachtwoord' ),
+			'dashboard'       => wc_get_account_endpoint_url( 'dashboard' ),
+			'facturen'        => wc_get_account_endpoint_url( 'facturen' ),
+			'instellingen'    => wc_get_account_endpoint_url( 'instellingen' ),
+			'factuurgegevens' => wc_get_account_endpoint_url( 'factuurgegevens' ),
+			'wachtwoord'      => wc_get_account_endpoint_url( 'wachtwoord' ),
 		);
 	}
 
@@ -2097,7 +2359,7 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 			'tabAction'        => 'coachtribe_my_account_tab',
 			'endpointUrls'     => $endpoint_urls,
 			'initialTab'       => $initial_tab,
-			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'wachtwoord', 'view-subscription' ),
+			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'wachtwoord', 'view-subscription' ),
 			'passwordMismatch' => __( 'Het nieuwe wachtwoord en de bevestiging komen niet overeen.', 'coachtribe-my-account' ),
 			'invalidEmail'              => __( 'Voer een geldig e-mailadres in.', 'coachtribe-my-account' ),
 			'invalidPhone'              => __( 'Voer een geldig telefoonnummer in (alleen cijfers en +, spaties, haakjes of streepjes; minimaal 8 cijfers).', 'coachtribe-my-account' ),

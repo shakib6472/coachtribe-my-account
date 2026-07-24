@@ -34,16 +34,32 @@ $ct_header_avatar_alt = sprintf(
 	$ct_name
 );
 
-$ct_is_overzicht    = ( '' === $ct_endpoint || 'dashboard' === $ct_endpoint );
-$ct_is_facturen     = ( 'facturen' === $ct_endpoint );
-$ct_is_instellingen = ( 'instellingen' === $ct_endpoint );
-$ct_is_wachtwoord   = ( 'wachtwoord' === $ct_endpoint );
+$ct_is_overzicht       = ( '' === $ct_endpoint || 'dashboard' === $ct_endpoint );
+$ct_is_facturen        = ( 'facturen' === $ct_endpoint );
+$ct_is_instellingen    = ( 'instellingen' === $ct_endpoint );
+$ct_is_factuurgegevens = ( 'factuurgegevens' === $ct_endpoint );
+$ct_is_wachtwoord      = ( 'wachtwoord' === $ct_endpoint );
 
-$ct_overzicht_url    = wc_get_account_endpoint_url( 'dashboard' );
-$ct_facturen_url     = wc_get_account_endpoint_url( 'facturen' );
-$ct_instellingen_url = wc_get_account_endpoint_url( 'instellingen' );
-$ct_wachtwoord_url   = wc_get_account_endpoint_url( 'wachtwoord' );
-$ct_logout_url       = wc_logout_url( wc_get_page_permalink( 'myaccount' ) );
+$ct_overzicht_url       = wc_get_account_endpoint_url( 'dashboard' );
+$ct_facturen_url        = wc_get_account_endpoint_url( 'facturen' );
+$ct_instellingen_url    = wc_get_account_endpoint_url( 'instellingen' );
+$ct_factuurgegevens_url = wc_get_account_endpoint_url( 'factuurgegevens' );
+$ct_wachtwoord_url      = wc_get_account_endpoint_url( 'wachtwoord' );
+$ct_logout_url          = wc_logout_url( wc_get_page_permalink( 'myaccount' ) );
+
+// Membership type drives which navigation items appear (woocommerce | plug_and_pay | gratis).
+$ct_member_type    = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type() : 'woocommerce';
+$ct_is_wc_member   = ( 'woocommerce' === $ct_member_type );
+$ct_is_plugandpay  = ( 'plug_and_pay' === $ct_member_type );
+$ct_is_free        = ( 'gratis' === $ct_member_type );
+$ct_plugandpay_url = function_exists( 'coachtribe_my_account_plugandpay_url' ) ? coachtribe_my_account_plugandpay_url() : '';
+
+// Free members have no invoices; Plug&Pay members read invoices on the external portal.
+$ct_show_facturen        = ! $ct_is_free;
+$ct_facturen_nav_url     = ( $ct_is_plugandpay && '' !== $ct_plugandpay_url ) ? $ct_plugandpay_url : $ct_facturen_url;
+$ct_facturen_is_external = ( $ct_is_plugandpay && '' !== $ct_plugandpay_url );
+// The editable billing-details page is only for WooCommerce members.
+$ct_show_factuurgegevens = $ct_is_wc_member;
 
 $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 require_once COACHTRIBE_MY_ACCOUNT_PATH . 'templates/partials/sidebar-nav-icons.php';
@@ -85,9 +101,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<?php if ( 'wc-default' === $ct_tab_slug ) : ?>
 					<option value="" disabled selected><?php esc_html_e( 'Huidige pagina (menu)', 'coachtribe-my-account' ); ?></option>
 				<?php endif; ?>
-				<option value="dashboard" data-url="<?php echo esc_url( $ct_overzicht_url ); ?>" <?php selected( $ct_tab_slug, 'dashboard' ); ?>><?php esc_html_e( 'Overzicht', 'coachtribe-my-account' ); ?></option>
-				<option value="facturen" data-url="<?php echo esc_url( $ct_facturen_url ); ?>" <?php selected( $ct_tab_slug, 'facturen' ); ?>><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></option>
-				<option value="instellingen" data-url="<?php echo esc_url( $ct_instellingen_url ); ?>" <?php selected( $ct_tab_slug, 'instellingen' ); ?>><?php esc_html_e( 'Instellingen', 'coachtribe-my-account' ); ?></option>
+				<option value="dashboard" data-url="<?php echo esc_url( $ct_overzicht_url ); ?>" <?php selected( $ct_tab_slug, 'dashboard' ); ?>><?php esc_html_e( 'Mijn account', 'coachtribe-my-account' ); ?></option>
+				<?php if ( $ct_is_wc_member ) : ?><option value="facturen" data-url="<?php echo esc_url( $ct_facturen_url ); ?>" <?php selected( $ct_tab_slug, 'facturen' ); ?>><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></option>
+				<option value="factuurgegevens" data-url="<?php echo esc_url( $ct_factuurgegevens_url ); ?>" <?php selected( $ct_tab_slug, 'factuurgegevens' ); ?>><?php esc_html_e( 'Factuurgegevens', 'coachtribe-my-account' ); ?></option><?php endif; ?>
 				<option class="ct-account-tab-select-option--instellingen-only" value="wachtwoord" data-url="<?php echo esc_url( $ct_wachtwoord_url ); ?>" <?php selected( $ct_tab_slug, 'wachtwoord' ); ?>><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></option>
 			</select>
 		</div>
@@ -102,10 +118,22 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 						data-ct-tab="dashboard"
 					>
 						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo $ct_is_overzicht ? coachtribe_my_account_sidebar_nav_icon( 'home-solid' ) : coachtribe_my_account_sidebar_nav_icon( 'home-outline' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Overzicht', 'coachtribe-my-account' ); ?></span>
+						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Mijn account', 'coachtribe-my-account' ); ?></span>
 					</a>
 				</li>
+				<?php if ( $ct_show_facturen ) : ?>
 				<li class="ct-account-sidebar__item">
+					<?php if ( $ct_facturen_is_external ) : ?>
+					<a
+						class="ct-account-sidebar__link"
+						href="<?php echo esc_url( $ct_facturen_nav_url ); ?>"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo coachtribe_my_account_sidebar_nav_icon( 'invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></span>
+					</a>
+					<?php else : ?>
 					<a
 						class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_facturen ? ' is-active' : ''; ?>"
 						href="<?php echo esc_url( $ct_facturen_url ); ?>"
@@ -114,17 +142,21 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo coachtribe_my_account_sidebar_nav_icon( 'invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></span>
 					</a>
+					<?php endif; ?>
 				</li>
+				<?php endif; ?>
+				<?php if ( $ct_show_factuurgegevens ) : ?>
 				<li class="ct-account-sidebar__item">
 					<a
-						class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_instellingen ? ' is-active' : ''; ?>"
-						href="<?php echo esc_url( $ct_instellingen_url ); ?>"
-						data-ct-tab="instellingen"
+						class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_factuurgegevens ? ' is-active' : ''; ?>"
+						href="<?php echo esc_url( $ct_factuurgegevens_url ); ?>"
+						data-ct-tab="factuurgegevens"
 					>
-						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo coachtribe_my_account_sidebar_nav_icon( 'settings' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Instellingen', 'coachtribe-my-account' ); ?></span>
+						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo coachtribe_my_account_sidebar_nav_icon( 'invoice' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Factuurgegevens', 'coachtribe-my-account' ); ?></span>
 					</a>
 				</li>
+				<?php endif; ?>
 				<li class="ct-account-sidebar__item ct-account-sidebar__item--instellingen-only">
 					<a
 						class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_wachtwoord ? ' is-active' : ''; ?>"
@@ -158,8 +190,8 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 		<header class="ct-account-header<?php echo $ct_is_overzicht ? ' ct-account-header--overzicht' : ''; ?><?php echo $ct_is_instellingen ? ' ct-account-header--instellingen' : ''; ?>">
 			<div class="ct-account-header__titles">
 				<?php if ( $ct_is_overzicht ) : ?>
-					<h1 class="ct-account-header__title"><?php esc_html_e( 'Overzicht', 'coachtribe-my-account' ); ?></h1>
-					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Hier vind je een overzicht van je abonnement en belangrijke informatie.', 'coachtribe-my-account' ); ?></p>
+					<h1 class="ct-account-header__title"><?php esc_html_e( 'Mijn account', 'coachtribe-my-account' ); ?></h1>
+					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Hier beheer je je account en bekijk je je abonnementsgegevens.', 'coachtribe-my-account' ); ?></p>
 				<?php elseif ( $ct_is_instellingen ) : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Instellingen', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Beheer je abonnement, facturen en accountinstellingen.', 'coachtribe-my-account' ); ?></p>
@@ -237,6 +269,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 								break;
 							case 'instellingen':
 								do_action( 'woocommerce_account_instellingen_endpoint' );
+								break;
+							case 'factuurgegevens':
+								do_action( 'woocommerce_account_factuurgegevens_endpoint' );
 								break;
 							case 'wachtwoord':
 								do_action( 'woocommerce_account_wachtwoord_endpoint' );

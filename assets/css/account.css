@@ -6221,3 +6221,83 @@ body.coachtribe-my-account-shell .ct-account .ct-account-submit-button--ref-save
 		box-sizing: border-box !important;
 	}
 }
+
+/* -------------------------------------------------------------------------
+   WooCommerce order-details (view-order) — CoachTribe donker thema
+   Brings WC's default order/customer tables in line with the dark + red shell.
+   ------------------------------------------------------------------------- */
+.ct-account .woocommerce-order,
+.ct-account .woocommerce-order-details,
+.ct-account .woocommerce-customer-details,
+.ct-account .woocommerce-columns--addresses {
+	color: var(--ct-color-text);
+	margin-top: 1.5rem;
+}
+
+.ct-account .woocommerce-order p,
+.ct-account .woocommerce-order-details p,
+.ct-account .woocommerce-customer-details p {
+	color: var(--ct-color-text);
+}
+
+.ct-account .woocommerce-order-details__title,
+.ct-account .woocommerce-column__title,
+.ct-account .woocommerce-customer-details h2 {
+	color: var(--ct-color-text);
+	font-size: 1.25rem;
+	font-weight: 700;
+	margin: 1.75rem 0 1rem;
+}
+
+.ct-account .woocommerce-order mark,
+.ct-account .woocommerce-order .order-status {
+	background: transparent;
+	color: var(--ct-color-accent);
+	font-weight: 700;
+}
+
+.ct-account table.shop_table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 12px;
+	overflow: hidden;
+	color: var(--ct-color-text);
+}
+
+.ct-account table.shop_table th,
+.ct-account table.shop_table td {
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--ct-color-border);
+	background: transparent;
+	color: var(--ct-color-text);
+	text-align: left;
+}
+
+.ct-account table.shop_table thead th,
+.ct-account table.shop_table tfoot th,
+.ct-account table.shop_table tfoot td {
+	background: var(--ct-bg-sidebar);
+	color: var(--ct-color-text);
+	font-weight: 700;
+}
+
+.ct-account table.shop_table a {
+	color: var(--ct-color-accent);
+	text-decoration: none;
+}
+
+.ct-account table.shop_table a:hover {
+	text-decoration: underline;
+}
+
+.ct-account .woocommerce-customer-details address {
+	color: var(--ct-color-text-muted);
+	font-style: normal;
+	line-height: 1.6;
+	border: 1px solid var(--ct-color-border);
+	border-radius: 12px;
+	padding: 1rem 1.15rem;
+	background: var(--ct-bg-card);
+}

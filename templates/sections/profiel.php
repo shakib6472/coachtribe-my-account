@@ -67,7 +67,7 @@ $ct_profile_form_collapsed = $ct_profile_saved_flag;
 $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'dashboard' ) : '';
 ?>
 <section class="ct-account-profiel<?php echo $ct_profile_form_collapsed ? ' ct-account-profiel--form-collapsed' : ''; ?>" aria-labelledby="ct-account-profiel-title">
-	<h2 id="ct-account-profiel-title" class="ct-account-profiel__title"><?php esc_html_e( 'Jouw profiel', 'coachtribe-my-account' ); ?></h2>
+	<h2 id="ct-account-profiel-title" class="ct-account-profiel__title"><?php esc_html_e( 'Mijn persoonlijke gegevens', 'coachtribe-my-account' ); ?></h2>
 
 	<div class="ct-account-profiel__card-row">
 		<div class="ct-account-profiel__avatar ct-account-profiel__avatar-col">
@@ -150,7 +150,7 @@ $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_
 						<?php wp_nonce_field( 'coachtribe_profile_edit', 'coachtribe_profile_edit_nonce' ); ?>
 
 						<div class="ct-account-settings-field">
-							<label class="ct-account-settings-field__label" for="ct_profile_display_name"><?php esc_html_e( 'Display name', 'coachtribe-my-account' ); ?></label>
+							<label class="ct-account-settings-field__label" for="ct_profile_display_name"><?php esc_html_e( 'Weergavenaam', 'coachtribe-my-account' ); ?></label>
 							<input
 								class="ct-account-input"
 								type="text"
@@ -164,7 +164,7 @@ $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_
 						</div>
 
 						<div class="ct-account-settings-field">
-							<label class="ct-account-settings-field__label" for="ct_profile_email"><?php esc_html_e( 'Email address', 'coachtribe-my-account' ); ?></label>
+							<label class="ct-account-settings-field__label" for="ct_profile_email"><?php esc_html_e( 'E-mailadres', 'coachtribe-my-account' ); ?></label>
 							<input
 								class="ct-account-input"
 								type="email"
@@ -178,7 +178,7 @@ $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_
 						</div>
 
 						<div class="ct-account-settings-field">
-							<label class="ct-account-settings-field__label" for="ct_profile_phone"><?php esc_html_e( 'Phone number', 'coachtribe-my-account' ); ?></label>
+							<label class="ct-account-settings-field__label" for="ct_profile_phone"><?php esc_html_e( 'Telefoonnummer', 'coachtribe-my-account' ); ?></label>
 							<input
 								class="ct-account-input"
 								type="tel"
@@ -193,7 +193,7 @@ $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_
 
 						<div class="ct-account-settings-field ct-account-settings-field--submit">
 							<button type="submit" name="coachtribe_profile_edit_submit" value="1" class="ct-account-submit-button">
-								<?php esc_html_e( 'Save Changes', 'coachtribe-my-account' ); ?>
+								<?php esc_html_e( 'Wijzigingen opslaan', 'coachtribe-my-account' ); ?>
 							</button>
 						</div>
 					</form>

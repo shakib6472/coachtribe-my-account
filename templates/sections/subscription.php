@@ -355,10 +355,6 @@ $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 					</div>
 				<?php endif; ?>
 			</div>
-
-			<div class="ct-profile-photo-right">
-				<?php require $ct_sections_dir . 'profile-avatar-header.php'; ?>
-			</div>
 		</div>
 	</div>
 </section>

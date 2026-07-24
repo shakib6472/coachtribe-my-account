@@ -73,8 +73,8 @@ $ct_invoice_status_label = static function ( $order ) {
 
 $ct_inv_base_url = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'facturen' ) : '';
 ?>
-<section class="ct-account-invoices" aria-labelledby="ct-account-invoices-title">
-	<h2 id="ct-account-invoices-title" class="ct-account-invoices__title"><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></h2>
+<section class="ct-account-invoices" aria-label="<?php esc_attr_e( 'Facturen', 'coachtribe-my-account' ); ?>">
+	<?php // Kop 'Facturen' verwijderd — de paginakop toont deze titel al. ?>
 
 	<?php if ( empty( $ct_inv_orders ) ) : ?>
 		<p class="ct-account-invoices-empty"><?php esc_html_e( 'Geen facturen gevonden.', 'coachtribe-my-account' ); ?></p>
@@ -87,7 +87,7 @@ $ct_inv_base_url = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_acc
 						<th class="ct-account-invoice-date" scope="col"><?php esc_html_e( 'Datum', 'coachtribe-my-account' ); ?></th>
 						<th class="ct-account-invoice-amount" scope="col"><?php esc_html_e( 'Bedrag', 'coachtribe-my-account' ); ?></th>
 						<th class="ct-account-invoice-status" scope="col"><?php esc_html_e( 'Betaalstatus', 'coachtribe-my-account' ); ?></th>
-						<th class="ct-account-invoice-download" scope="col"><?php esc_html_e( 'Downloaden', 'coachtribe-my-account' ); ?></th>
+						<th class="ct-account-invoice-download" scope="col"><?php esc_html_e( 'Factuur in pdf', 'coachtribe-my-account' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
