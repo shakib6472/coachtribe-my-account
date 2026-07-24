@@ -2088,7 +2088,7 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 		);
 	}
 
-	wp_localize_script(
+	wp_localize_script( 
 		'coachtribe-my-account',
 		'coachtribeMyAccount',
 		array(
