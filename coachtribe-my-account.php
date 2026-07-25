@@ -3,13 +3,13 @@
  * Plugin Name:       CoachTribe My Account
  * Plugin URI:        https://coachtribe.nl/
  * Description:       Custom WooCommerce My Account page for CoachTribe — custom endpoints, templates, SPA-tabs, CoachTribe styling.
- * Version:           1.0.18
+ * Version:           2.1.0
  * Author:            CoachTribe
  * Author URI:        https://coachtribe.nl/
  * Text Domain:        coachtribe-my-account
  * Domain Path:        /languages
  * Requires at least:  6.0
- * Requires PHP:       7.4
+ * Requires PHP:       7.4  
  * WC requires at least: 7.0
  * WC tested up to:     9.0
  * License:            GPL-2.0-or-later
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '1.0.55' );
+define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.0' );
 define( 'COACHTRIBE_MY_ACCOUNT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'COACHTRIBE_MY_ACCOUNT_URL', plugin_dir_url( __FILE__ ) );
 

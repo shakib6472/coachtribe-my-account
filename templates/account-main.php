@@ -104,7 +104,7 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<option value="dashboard" data-url="<?php echo esc_url( $ct_overzicht_url ); ?>" <?php selected( $ct_tab_slug, 'dashboard' ); ?>><?php esc_html_e( 'Mijn account', 'coachtribe-my-account' ); ?></option>
 				<?php if ( $ct_is_wc_member ) : ?><option value="facturen" data-url="<?php echo esc_url( $ct_facturen_url ); ?>" <?php selected( $ct_tab_slug, 'facturen' ); ?>><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></option>
 				<option value="factuurgegevens" data-url="<?php echo esc_url( $ct_factuurgegevens_url ); ?>" <?php selected( $ct_tab_slug, 'factuurgegevens' ); ?>><?php esc_html_e( 'Factuurgegevens', 'coachtribe-my-account' ); ?></option><?php endif; ?>
-				<option class="ct-account-tab-select-option--instellingen-only" value="wachtwoord" data-url="<?php echo esc_url( $ct_wachtwoord_url ); ?>" <?php selected( $ct_tab_slug, 'wachtwoord' ); ?>><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></option>
+				<option value="wachtwoord" data-url="<?php echo esc_url( $ct_wachtwoord_url ); ?>" <?php selected( $ct_tab_slug, 'wachtwoord' ); ?>><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></option>
 			</select>
 		</div>
 
@@ -157,7 +157,7 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 					</a>
 				</li>
 				<?php endif; ?>
-				<li class="ct-account-sidebar__item ct-account-sidebar__item--instellingen-only">
+				<li class="ct-account-sidebar__item">
 					<a
 						class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_wachtwoord ? ' is-active' : ''; ?>"
 						href="<?php echo esc_url( $ct_wachtwoord_url ); ?>"
