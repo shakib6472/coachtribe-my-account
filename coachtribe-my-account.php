@@ -346,7 +346,10 @@ function coachtribe_my_account_register_hooks() {
 	add_action( 'wp_ajax_coachtribe_my_account_tab', 'coachtribe_my_account_ajax_tab' );
 	add_action( 'wp_ajax_coachtribe_my_account_profile_image', 'coachtribe_my_account_ajax_profile_image' );
 	add_action( 'wp_ajax_coachtribe_my_account_cancel_subscription', 'coachtribe_my_account_ajax_cancel_subscription' );
+	add_action( 'wp_ajax_coachtribe_cancellation_request', 'coachtribe_my_account_ajax_cancellation_request' );
+	add_action( 'admin_post_coachtribe_approve_cancellation', 'coachtribe_my_account_handle_approve_cancellation' );
 	add_shortcode( 'coachtribe_my_account', 'coachtribe_my_account_shortcode' );
+	add_shortcode( 'coachtribe_cancellation', 'coachtribe_my_account_cancellation_shortcode' );
 }
 
 /**
@@ -725,6 +728,276 @@ function coachtribe_my_account_guard_account_endpoints() {
 			exit;
 		}
 	}
+}
+
+/* -----------------------------------------------------------------------------
+ * Subscription cancellation
+ *  - WooCommerce / Free members : PMPro's own [pmpro_cancel] flow.
+ *  - Plug&Pay members           : a "cancellation requested" workflow (no auto
+ *                                 cancel); an admin approves it afterwards.
+ * -------------------------------------------------------------------------- */
+
+/**
+ * URL of the page that holds the [coachtribe_cancellation] shortcode.
+ * Configure via the `coachtribe_cancellation_page_id` option or the filter below.
+ *
+ * @return string
+ */
+function coachtribe_my_account_cancellation_url() {
+	$url     = '';
+	$page_id = (int) get_option( 'coachtribe_cancellation_page_id', 0 );
+	if ( $page_id > 0 ) {
+		$permalink = get_permalink( $page_id );
+		$url       = $permalink ? (string) $permalink : '';
+	}
+	return (string) apply_filters( 'coachtribe_my_account_cancellation_url', $url );
+}
+
+/**
+ * Reason options offered on the Plug&Pay cancellation request form.
+ *
+ * @return array<string,string>
+ */
+function coachtribe_my_account_cancellation_reasons() {
+	return (array) apply_filters(
+		'coachtribe_my_account_cancellation_reasons',
+		array(
+			'te_duur'          => __( 'Te duur', 'coachtribe-my-account' ),
+			'te_weinig'        => __( 'Te weinig gebruikt', 'coachtribe-my-account' ),
+			'tijdelijk_pauze'  => __( 'Tijdelijk pauzeren', 'coachtribe-my-account' ),
+			'overgestapt'      => __( 'Overgestapt naar iets anders', 'coachtribe-my-account' ),
+			'anders'           => __( 'Anders', 'coachtribe-my-account' ),
+		)
+	);
+}
+
+/**
+ * Shortcode: cancellation UI. Plug&Pay members get the request flow; everyone
+ * else falls back to PMPro's built-in [pmpro_cancel] shortcode.
+ *
+ * @return string
+ */
+function coachtribe_my_account_cancellation_shortcode() {
+	if ( ! is_user_logged_in() ) {
+		return '';
+	}
+
+	ob_start();
+
+	if ( coachtribe_my_account_is_plugandpay_member() ) {
+		$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/cancellation-request.php';
+		if ( is_readable( $file ) ) {
+			include $file;
+		}
+	} else {
+		echo do_shortcode( '[pmpro_cancel]' );
+	}
+
+	return (string) ob_get_clean();
+}
+
+/**
+ * AJAX: register a Plug&Pay member's cancellation request (no auto cancel).
+ *
+ * @return void
+ */
+function coachtribe_my_account_ajax_cancellation_request() {
+	if ( ! check_ajax_referer( 'coachtribe_cancellation_request', 'nonce', false ) ) {
+		wp_send_json_error( array( 'message' => __( 'Ongeldige sessie. Vernieuw de pagina en probeer opnieuw.', 'coachtribe-my-account' ) ), 403 );
+	}
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => __( 'Je moet ingelogd zijn.', 'coachtribe-my-account' ) ), 403 );
+	}
+
+	$uid = get_current_user_id();
+
+	// The request flow is only for Plug&Pay members.
+	if ( ! coachtribe_my_account_is_plugandpay_member( $uid ) ) {
+		wp_send_json_error( array( 'message' => __( 'Deze actie is niet beschikbaar voor jouw account.', 'coachtribe-my-account' ) ), 400 );
+	}
+
+	// Already requested — do not send a second notification.
+	if ( '' !== (string) get_user_meta( $uid, 'ct_cancellation_requested', true ) ) {
+		wp_send_json_success(
+			array(
+				'already' => true,
+				'message' => __( 'Je opzegverzoek is al ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
+			)
+		);
+	}
+
+	$reason = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : '';
+
+	update_user_meta( $uid, 'ct_cancellation_requested', time() );
+	update_user_meta( $uid, 'ct_cancellation_reason', $reason );
+
+	coachtribe_my_account_notify_cancellation_request( $uid, $reason );
+
+	/**
+	 * After a Plug&Pay cancellation request is stored.
+	 *
+	 * @param int    $uid    User ID.
+	 * @param string $reason Reason key (may be empty).
+	 */
+	do_action( 'coachtribe_my_account_after_cancellation_request', $uid, $reason );
+
+	wp_send_json_success(
+		array(
+			'already' => false,
+			'message' => __( 'Je opzegverzoek is ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
+		)
+	);
+}
+
+/**
+ * Email the team when a Plug&Pay member requests cancellation.
+ *
+ * @param int    $uid    User ID.
+ * @param string $reason Reason key (may be empty).
+ * @return void
+ */
+function coachtribe_my_account_notify_cancellation_request( $uid, $reason ) {
+	$user = get_userdata( $uid );
+	if ( ! $user ) {
+		return;
+	}
+
+	$to      = (string) apply_filters( 'coachtribe_my_account_cancellation_notify_email', 'info@coachtribe.nl' );
+	$reasons = coachtribe_my_account_cancellation_reasons();
+	$reason_label = ( '' !== $reason && isset( $reasons[ $reason ] ) ) ? $reasons[ $reason ] : __( '(geen opgegeven)', 'coachtribe-my-account' );
+
+	$subject = sprintf(
+		/* translators: %s: member name */
+		__( 'Opzegverzoek (Plug&Pay): %s', 'coachtribe-my-account' ),
+		$user->display_name
+	);
+
+	$lines = array(
+		__( 'Er is een opzegverzoek binnengekomen van een Plug&Pay-lid.', 'coachtribe-my-account' ),
+		'',
+		sprintf( __( 'Naam: %s', 'coachtribe-my-account' ), $user->display_name ),
+		sprintf( __( 'E-mail: %s', 'coachtribe-my-account' ), $user->user_email ),
+		sprintf( __( 'Gebruiker-ID: %d', 'coachtribe-my-account' ), $uid ),
+		sprintf( __( 'Reden: %s', 'coachtribe-my-account' ), $reason_label ),
+		sprintf( __( 'Datum: %s', 'coachtribe-my-account' ), wp_date( 'Y-m-d H:i' ) ),
+		'',
+		__( 'Zeg het abonnement op in Plug&Pay en keur daarna het verzoek goed via wp-admin → Opzegverzoeken.', 'coachtribe-my-account' ),
+	);
+
+	wp_mail( $to, $subject, implode( "\n", $lines ) );
+}
+
+/**
+ * Register the admin page listing Plug&Pay cancellation requests.
+ *
+ * @return void
+ */
+function coachtribe_my_account_register_cancellation_admin() {
+	add_menu_page(
+		__( 'Opzegverzoeken', 'coachtribe-my-account' ),
+		__( 'Opzegverzoeken', 'coachtribe-my-account' ),
+		'manage_options',
+		'coachtribe-cancellation-requests',
+		'coachtribe_my_account_render_cancellation_admin',
+		'dashicons-dismiss',
+		58
+	);
+}
+add_action( 'admin_menu', 'coachtribe_my_account_register_cancellation_admin' );
+
+/**
+ * Admin handler: approve a request → cancel the PMPro membership + clear the flag.
+ *
+ * @return void
+ */
+function coachtribe_my_account_handle_approve_cancellation() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'Onvoldoende rechten.', 'coachtribe-my-account' ) );
+	}
+	check_admin_referer( 'coachtribe_approve_cancellation' );
+
+	$uid = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
+	$redirect = admin_url( 'admin.php?page=coachtribe-cancellation-requests' );
+
+	if ( $uid > 0 ) {
+		if ( function_exists( 'pmpro_changeMembershipLevel' ) ) {
+			pmpro_changeMembershipLevel( 0, $uid );
+		}
+		delete_user_meta( $uid, 'ct_cancellation_requested' );
+		delete_user_meta( $uid, 'ct_cancellation_reason' );
+		$redirect = add_query_arg( 'approved', '1', $redirect );
+	}
+
+	wp_safe_redirect( $redirect );
+	exit;
+}
+
+/**
+ * Render the cancellation-requests admin table.
+ *
+ * @return void
+ */
+function coachtribe_my_account_render_cancellation_admin() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$requests = get_users(
+		array(
+			'meta_key'     => 'ct_cancellation_requested', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_compare' => 'EXISTS',
+			'orderby'      => 'meta_value_num',
+			'order'        => 'ASC',
+		)
+	);
+	$reasons = coachtribe_my_account_cancellation_reasons();
+	?>
+	<div class="wrap">
+		<h1><?php esc_html_e( 'Opzegverzoeken (Plug&Pay)', 'coachtribe-my-account' ); ?></h1>
+		<?php if ( isset( $_GET['approved'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Lidmaatschap geannuleerd en verzoek verwijderd.', 'coachtribe-my-account' ); ?></p></div>
+		<?php endif; ?>
+		<p><?php esc_html_e( 'Zeg eerst het abonnement op in Plug&Pay. Keur daarna hier goed om het lidmaatschap (course-toegang) te beëindigen.', 'coachtribe-my-account' ); ?></p>
+		<table class="wp-list-table widefat fixed striped">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Naam', 'coachtribe-my-account' ); ?></th>
+					<th><?php esc_html_e( 'E-mail', 'coachtribe-my-account' ); ?></th>
+					<th><?php esc_html_e( 'Aangevraagd op', 'coachtribe-my-account' ); ?></th>
+					<th><?php esc_html_e( 'Reden', 'coachtribe-my-account' ); ?></th>
+					<th><?php esc_html_e( 'Actie', 'coachtribe-my-account' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php if ( empty( $requests ) ) : ?>
+					<tr><td colspan="5"><?php esc_html_e( 'Geen openstaande opzegverzoeken.', 'coachtribe-my-account' ); ?></td></tr>
+				<?php else : ?>
+					<?php foreach ( $requests as $ct_req_user ) : ?>
+						<?php
+						$ct_req_ts     = (int) get_user_meta( $ct_req_user->ID, 'ct_cancellation_requested', true );
+						$ct_req_reason = (string) get_user_meta( $ct_req_user->ID, 'ct_cancellation_reason', true );
+						$ct_req_label  = ( '' !== $ct_req_reason && isset( $reasons[ $ct_req_reason ] ) ) ? $reasons[ $ct_req_reason ] : '—';
+						?>
+						<tr>
+							<td><?php echo esc_html( $ct_req_user->display_name ); ?></td>
+							<td><?php echo esc_html( $ct_req_user->user_email ); ?></td>
+							<td><?php echo esc_html( $ct_req_ts ? wp_date( 'Y-m-d H:i', $ct_req_ts ) : '—' ); ?></td>
+							<td><?php echo esc_html( $ct_req_label ); ?></td>
+							<td>
+								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'Lidmaatschap van dit lid nu beëindigen?', 'coachtribe-my-account' ) ); ?>');">
+									<input type="hidden" name="action" value="coachtribe_approve_cancellation" />
+									<input type="hidden" name="user_id" value="<?php echo (int) $ct_req_user->ID; ?>" />
+									<?php wp_nonce_field( 'coachtribe_approve_cancellation' ); ?>
+									<button type="submit" class="button button-primary"><?php esc_html_e( 'Goedkeuren & lidmaatschap annuleren', 'coachtribe-my-account' ); ?></button>
+								</form>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</tbody>
+		</table>
+	</div>
+	<?php
 }
 
 /**
