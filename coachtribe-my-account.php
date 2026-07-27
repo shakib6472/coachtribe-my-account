@@ -3,7 +3,7 @@
  * Plugin Name:       CoachTribe My Account
  * Plugin URI:        https://coachtribe.nl/
  * Description:       Custom WooCommerce My Account page for CoachTribe — custom endpoints, templates, SPA-tabs, CoachTribe styling.
- * Version:           2.1.0
+ * Version:           2.1.1
  * Author:            CoachTribe
  * Author URI:        https://coachtribe.nl/
  * Text Domain:        coachtribe-my-account
