@@ -1,6 +1,10 @@
 <?php
 /**
- * Plug&Pay cancellation request UI (rendered by [coachtribe_cancellation]).
+ * Shared cancellation UI (rendered by [coachtribe_cancellation]) — same design for
+ * every member. The AJAX endpoint decides what happens on submit:
+ *   - WooCommerce : cancel the subscription.
+ *   - Free (PMPro): cancel the membership.
+ *   - Plug&Pay    : store a "cancellation requested" flag + notify the team.
  *
  * Self-contained (inline style + script) so it also works on a standalone
  * Elementor/PMPro page where the account assets are not enqueued.
@@ -11,15 +15,45 @@
 defined( 'ABSPATH' ) || exit;
 
 $ct_cancel_uid     = get_current_user_id();
-$ct_cancel_already = ( '' !== (string) get_user_meta( $ct_cancel_uid, 'ct_cancellation_requested', true ) );
+$ct_cancel_type    = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type( $ct_cancel_uid ) : 'woocommerce';
+$ct_cancel_is_pnp  = ( 'plug_and_pay' === $ct_cancel_type );
+$ct_cancel_already = ( $ct_cancel_is_pnp && '' !== (string) get_user_meta( $ct_cancel_uid, 'ct_cancellation_requested', true ) );
 $ct_cancel_nonce   = wp_create_nonce( 'coachtribe_cancellation_request' );
 $ct_cancel_ajax    = admin_url( 'admin-ajax.php' );
 $ct_cancel_reasons = function_exists( 'coachtribe_my_account_cancellation_reasons' ) ? coachtribe_my_account_cancellation_reasons() : array();
 $ct_cancel_back    = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'dashboard' ) : home_url( '/' );
+$ct_cancel_sum     = function_exists( 'coachtribe_my_account_cancellation_summary' )
+	? coachtribe_my_account_cancellation_summary( $ct_cancel_uid )
+	: array(
+		'plan'         => '—',
+		'amount'       => '—',
+		'access_until' => '—',
+	);
+
+// Warning text differs slightly per provider; the design stays the same.
+if ( $ct_cancel_is_pnp ) {
+	$ct_cancel_warn = __( 'Je abonnement loopt via Plug&Pay. Na je verzoek zeggen wij het voor je op. Je behoudt toegang tot het einde van je factureringsperiode.', 'coachtribe-my-account' );
+} elseif ( '—' !== $ct_cancel_sum['access_until'] ) {
+	$ct_cancel_warn = sprintf(
+		/* translators: %s: access-until date */
+		__( 'Na het opzeggen wordt je abonnement niet meer verlengd. Je behoudt toegang tot en met %s.', 'coachtribe-my-account' ),
+		$ct_cancel_sum['access_until']
+	);
+} else {
+	$ct_cancel_warn = __( 'Na het opzeggen wordt je abonnement niet meer verlengd. Je behoudt toegang tot het einde van je factureringsperiode.', 'coachtribe-my-account' );
+}
 ?>
 <style>
-	.ct-cancel{--ct-c-accent:rgb(255,77,109);--ct-c-bg:#1a1a1a;--ct-c-border:#2a2a2a;--ct-c-text:#fff;--ct-c-muted:#aaa;
-		max-width:760px;font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;color:var(--ct-c-text)}
+	.ct-cancel{--ct-c-accent:rgb(255,77,109);--ct-c-bg:#1a1a1a;--ct-c-ring:#8b1d2c;--ct-c-border:#2a2a2a;--ct-c-text:#fff;--ct-c-muted:#aaa;
+		max-width:860px;font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;color:var(--ct-c-text)}
+	.ct-cancel__sub{background:var(--ct-c-bg);border:1px solid var(--ct-c-border);border-radius:12px;padding:20px 22px;margin-bottom:20px}
+	.ct-cancel__sub-title{margin:0 0 16px;font-size:17px;font-weight:700}
+	.ct-cancel__sub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+	.ct-cancel__sub-item{display:flex;align-items:center;gap:12px}
+	.ct-cancel__sub-ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:var(--ct-c-ring);
+		display:flex;align-items:center;justify-content:center;color:#fff}
+	.ct-cancel__sub-label{display:block;color:var(--ct-c-muted);font-size:12.5px;margin-bottom:2px}
+	.ct-cancel__sub-value{display:block;font-weight:700;font-size:14.5px}
 	.ct-cancel__warn{display:flex;gap:14px;align-items:flex-start;background:rgba(232,163,61,.08);
 		border:1px solid #e8a33d;border-radius:12px;padding:16px 18px;margin-bottom:22px}
 	.ct-cancel__warn svg{flex:0 0 auto;margin-top:2px}
@@ -44,6 +78,40 @@ $ct_cancel_back    = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_a
 </style>
 
 <div class="ct-cancel" data-ct-cancel>
+
+	<div class="ct-cancel__sub">
+		<h3 class="ct-cancel__sub-title"><?php esc_html_e( 'Mijn abonnement', 'coachtribe-my-account' ); ?></h3>
+		<div class="ct-cancel__sub-grid">
+			<div class="ct-cancel__sub-item">
+				<span class="ct-cancel__sub-ic" aria-hidden="true">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+				</span>
+				<span>
+					<span class="ct-cancel__sub-label"><?php esc_html_e( 'Soort abonnement', 'coachtribe-my-account' ); ?></span>
+					<span class="ct-cancel__sub-value"><?php echo esc_html( $ct_cancel_sum['plan'] ); ?></span>
+				</span>
+			</div>
+			<div class="ct-cancel__sub-item">
+				<span class="ct-cancel__sub-ic" aria-hidden="true">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="12" rx="2" stroke="#fff" stroke-width="1.6"/><path d="M3 10h18" stroke="#fff" stroke-width="1.6"/></svg>
+				</span>
+				<span>
+					<span class="ct-cancel__sub-label"><?php esc_html_e( 'Bedrag', 'coachtribe-my-account' ); ?></span>
+					<span class="ct-cancel__sub-value"><?php echo esc_html( $ct_cancel_sum['amount'] ); ?></span>
+				</span>
+			</div>
+			<div class="ct-cancel__sub-item">
+				<span class="ct-cancel__sub-ic" aria-hidden="true">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+				</span>
+				<span>
+					<span class="ct-cancel__sub-label"><?php esc_html_e( 'Toegang tot en met', 'coachtribe-my-account' ); ?></span>
+					<span class="ct-cancel__sub-value"><?php echo esc_html( $ct_cancel_sum['access_until'] ); ?></span>
+				</span>
+			</div>
+		</div>
+	</div>
+
 	<div class="ct-cancel__warn">
 		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 			<path d="M12 3l9 16H3L12 3z" stroke="#e8a33d" stroke-width="1.8" stroke-linejoin="round"/>
@@ -51,7 +119,7 @@ $ct_cancel_back    = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_a
 		</svg>
 		<div>
 			<strong><?php esc_html_e( 'Je staat op het punt je abonnement op te zeggen', 'coachtribe-my-account' ); ?></strong>
-			<span><?php esc_html_e( 'Je abonnement loopt via Plug&Pay. Na je verzoek zeggen wij het voor je op. Je behoudt toegang tot het einde van je huidige factureringsperiode.', 'coachtribe-my-account' ); ?></span>
+			<span><?php echo esc_html( $ct_cancel_warn ); ?></span>
 		</div>
 	</div>
 

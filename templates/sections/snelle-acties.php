@@ -12,10 +12,8 @@ defined( 'ABSPATH' ) || exit;
 
 $ct_member_type = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type() : 'woocommerce';
 
-// Free members have no billing or payment actions.
-if ( 'gratis' === $ct_member_type ) {
-	return;
-}
+// Free members have no billing/payment actions — only the cancellation card is shown.
+$ct_show_billing_cards = ( 'gratis' !== $ct_member_type );
 
 $ct_plugandpay_url = function_exists( 'coachtribe_my_account_plugandpay_url' ) ? coachtribe_my_account_plugandpay_url() : '';
 $ct_quick_external = ( 'plug_and_pay' === $ct_member_type && '' !== $ct_plugandpay_url );
@@ -49,6 +47,7 @@ if ( '' === $ct_cancel_url ) {
 	<h2 id="ct-account-snella-acties-title" class="ct-account-snella-acties__title screen-reader-text"><?php esc_html_e( 'Snelle Acties', 'coachtribe-my-account' ); ?></h2>
 
 	<div class="ct-account-snella-acties__grid">
+		<?php if ( $ct_show_billing_cards ) : ?>
 		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_quick_facturen ); ?>"<?php echo $ct_quick_external ? $ct_ext_attrs : ' data-ct-tab="facturen"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<span class="ct-account-snella-acties__icon-ring" aria-hidden="true">
 				<svg class="ct-account-snella-acties__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
@@ -86,6 +85,7 @@ if ( '' === $ct_cancel_url ) {
 			</span>
 		</a>
 
+		<?php endif; ?>
 		<a class="ct-account-snella-acties__card ct-account-snella-acties__card--saas ct-account-snella-acties__card--ref" href="<?php echo esc_url( $ct_cancel_url ); ?>">
 			<span class="ct-account-snella-acties__icon-ring" aria-hidden="true">
 				<svg class="ct-account-snella-acties__svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">

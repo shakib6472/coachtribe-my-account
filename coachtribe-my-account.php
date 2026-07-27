@@ -772,8 +772,88 @@ function coachtribe_my_account_cancellation_reasons() {
 }
 
 /**
- * Shortcode: cancellation UI. Plug&Pay members get the request flow; everyone
- * else falls back to PMPro's built-in [pmpro_cancel] shortcode.
+ * The user's active WooCommerce subscription, if any.
+ *
+ * @param int|null $user_id Optional user ID.
+ * @return WC_Subscription|null
+ */
+function coachtribe_my_account_get_active_subscription( $user_id = null ) {
+	$user_id = $user_id ? (int) $user_id : get_current_user_id();
+	if ( ! function_exists( 'wcs_get_users_subscriptions' ) || ! class_exists( 'WC_Subscription' ) ) {
+		return null;
+	}
+	foreach ( wcs_get_users_subscriptions( $user_id ) as $sub ) {
+		if ( $sub instanceof WC_Subscription && $sub->has_status( 'active' ) ) {
+			return $sub;
+		}
+	}
+	return null;
+}
+
+/**
+ * Subscription summary for the cancellation page: plan, amount and access-until.
+ * WooCommerce members get full data from their subscription; Plug&Pay/Free fall
+ * back to the PMPro level name (amount/date stay em-dash — not available on our side).
+ *
+ * @param int|null $user_id Optional user ID.
+ * @return array{plan:string,amount:string,access_until:string}
+ */
+function coachtribe_my_account_cancellation_summary( $user_id = null ) {
+	$user_id = $user_id ? (int) $user_id : get_current_user_id();
+	$dash    = '—';
+	$summary = array(
+		'plan'         => $dash,
+		'amount'       => $dash,
+		'access_until' => $dash,
+	);
+
+	// All members are PMPro members — use the level name as the default plan label.
+	if ( function_exists( 'pmpro_getMembershipLevelForUser' ) ) {
+		$level = pmpro_getMembershipLevelForUser( $user_id );
+		if ( $level && ! empty( $level->name ) ) {
+			$summary['plan'] = $level->name;
+		}
+	}
+
+	$sub = coachtribe_my_account_get_active_subscription( $user_id );
+	if ( $sub instanceof WC_Subscription ) {
+		foreach ( $sub->get_items() as $item ) {
+			if ( $item->is_type( 'line_item' ) ) {
+				$summary['plan'] = $item->get_name();
+				break;
+			}
+		}
+
+		$period = $sub->get_billing_period();
+		$per     = '';
+		if ( 'month' === $period ) {
+			$per = __( 'per maand', 'coachtribe-my-account' );
+		} elseif ( 'year' === $period ) {
+			$per = __( 'per jaar', 'coachtribe-my-account' );
+		} elseif ( 'week' === $period ) {
+			$per = __( 'per week', 'coachtribe-my-account' );
+		}
+		$amount             = trim( wp_strip_all_tags( wc_price( $sub->get_total() ) ) );
+		$summary['amount']  = '' !== $per ? $amount . ' ' . $per : $amount;
+
+		$ts = $sub->get_time( 'next_payment' );
+		if ( ! $ts ) {
+			$ts = $sub->get_time( 'end' );
+		}
+		if ( $ts ) {
+			$summary['access_until'] = wp_date( get_option( 'date_format' ), $ts );
+		}
+	}
+
+	return $summary;
+}
+
+/**
+ * Shortcode: cancellation UI — the same design for every member. What happens on
+ * submit differs by payment provider (handled in the AJAX endpoint):
+ *   - WooCommerce : cancel the WooCommerce subscription.
+ *   - Free (PMPro): cancel the PMPro membership.
+ *   - Plug&Pay    : store a "cancellation requested" flag + notify the team.
  *
  * @return string
  */
@@ -783,21 +863,33 @@ function coachtribe_my_account_cancellation_shortcode() {
 	}
 
 	ob_start();
-
-	if ( coachtribe_my_account_is_plugandpay_member() ) {
-		$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/cancellation-request.php';
-		if ( is_readable( $file ) ) {
-			include $file;
-		}
-	} else {
-		echo do_shortcode( '[pmpro_cancel]' );
+	$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/cancellation-request.php';
+	if ( is_readable( $file ) ) {
+		include $file;
 	}
-
 	return (string) ob_get_clean();
 }
 
 /**
- * AJAX: register a Plug&Pay member's cancellation request (no auto cancel).
+ * Cancel a user's PMPro membership (level 0).
+ *
+ * @param int $uid User ID.
+ * @return void
+ */
+function coachtribe_my_account_cancel_pmpro_membership( $uid ) {
+	$uid = (int) $uid;
+	if ( function_exists( 'pmpro_changeMembershipLevel' ) ) {
+		pmpro_changeMembershipLevel( 0, $uid );
+	}
+	do_action( 'coachtribe_my_account_after_membership_cancel', $uid );
+}
+
+/**
+ * AJAX: handle a cancellation from the shared cancellation page. Same request for
+ * everyone; the outcome depends on the payment provider:
+ *   - Plug&Pay    : store a "cancellation requested" flag + notify the team (no auto cancel).
+ *   - WooCommerce : cancel the active subscription (access until end of period).
+ *   - Free/other  : cancel the PMPro membership.
  *
  * @return void
  */
@@ -809,44 +901,72 @@ function coachtribe_my_account_ajax_cancellation_request() {
 		wp_send_json_error( array( 'message' => __( 'Je moet ingelogd zijn.', 'coachtribe-my-account' ) ), 403 );
 	}
 
-	$uid = get_current_user_id();
+	$uid    = get_current_user_id();
+	$type   = coachtribe_my_account_get_member_type( $uid );
+	$reason = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : '';
 
-	// The request flow is only for Plug&Pay members.
-	if ( ! coachtribe_my_account_is_plugandpay_member( $uid ) ) {
-		wp_send_json_error( array( 'message' => __( 'Deze actie is niet beschikbaar voor jouw account.', 'coachtribe-my-account' ) ), 400 );
+	// Keep the reason on the profile for reference, regardless of provider.
+	if ( '' !== $reason ) {
+		update_user_meta( $uid, 'ct_cancellation_reason', $reason );
 	}
 
-	// Already requested — do not send a second notification.
-	if ( '' !== (string) get_user_meta( $uid, 'ct_cancellation_requested', true ) ) {
+	// --- Plug&Pay: request only, no automatic cancellation. ---
+	if ( 'plug_and_pay' === $type ) {
+		if ( '' !== (string) get_user_meta( $uid, 'ct_cancellation_requested', true ) ) {
+			wp_send_json_success(
+				array(
+					'already' => true,
+					'message' => __( 'Je opzegverzoek is al ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
+				)
+			);
+		}
+		update_user_meta( $uid, 'ct_cancellation_requested', time() );
+		coachtribe_my_account_notify_cancellation_request( $uid, $reason );
+
+		/**
+		 * After a Plug&Pay cancellation request is stored.
+		 *
+		 * @param int    $uid    User ID.
+		 * @param string $reason Reason key (may be empty).
+		 */
+		do_action( 'coachtribe_my_account_after_cancellation_request', $uid, $reason );
+
 		wp_send_json_success(
 			array(
-				'already' => true,
-				'message' => __( 'Je opzegverzoek is al ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
+				'already' => false,
+				'message' => __( 'Je opzegverzoek is ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
 			)
 		);
 	}
 
-	$reason = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : '';
+	// --- WooCommerce: cancel the active subscription (access stays until period end). ---
+	if ( 'woocommerce' === $type ) {
+		$sub = coachtribe_my_account_get_active_subscription( $uid );
+		if ( $sub instanceof WC_Subscription ) {
+			$target = 'pending-cancel';
+			if ( ! $sub->can_be_updated_to( $target ) ) {
+				$target = $sub->can_be_updated_to( 'cancelled' ) ? 'cancelled' : '';
+			}
+			if ( '' === $target ) {
+				wp_send_json_error( array( 'message' => __( 'Dit abonnement kan niet online worden opgezegd. Neem contact op met support.', 'coachtribe-my-account' ) ), 400 );
+			}
+			try {
+				$sub->update_status( $target, __( 'Opgezegd door klant (opzegpagina).', 'coachtribe-my-account' ) );
+			} catch ( Exception $e ) {
+				wp_send_json_error( array( 'message' => wp_strip_all_tags( $e->getMessage() ) ), 500 );
+			}
+			do_action( 'coachtribe_my_account_after_subscription_cancel', $uid, $sub );
+			wp_send_json_success( array( 'message' => __( 'Je abonnement is opgezegd. Je behoudt toegang tot het einde van je periode.', 'coachtribe-my-account' ) ) );
+		}
 
-	update_user_meta( $uid, 'ct_cancellation_requested', time() );
-	update_user_meta( $uid, 'ct_cancellation_reason', $reason );
+		// No cancellable subscription found — cancel the PMPro membership instead.
+		coachtribe_my_account_cancel_pmpro_membership( $uid );
+		wp_send_json_success( array( 'message' => __( 'Je abonnement is opgezegd.', 'coachtribe-my-account' ) ) );
+	}
 
-	coachtribe_my_account_notify_cancellation_request( $uid, $reason );
-
-	/**
-	 * After a Plug&Pay cancellation request is stored.
-	 *
-	 * @param int    $uid    User ID.
-	 * @param string $reason Reason key (may be empty).
-	 */
-	do_action( 'coachtribe_my_account_after_cancellation_request', $uid, $reason );
-
-	wp_send_json_success(
-		array(
-			'already' => false,
-			'message' => __( 'Je opzegverzoek is ontvangen. We verwerken het zo snel mogelijk.', 'coachtribe-my-account' ),
-		)
-	);
+	// --- Free (or anything else): cancel the PMPro membership directly. ---
+	coachtribe_my_account_cancel_pmpro_membership( $uid );
+	wp_send_json_success( array( 'message' => __( 'Je lidmaatschap is opgezegd.', 'coachtribe-my-account' ) ) );
 }
 
 /**
