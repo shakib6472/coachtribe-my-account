@@ -239,9 +239,31 @@ if ( $ct_sub instanceof WC_Subscription ) {
 		$ct_sub
 	);
 }
-?>
-<?php
+
 $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
+
+// Plug&Pay / Free members: combined-card data (subscription info + personal details).
+$ct_is_pmpro_only = ( ! $ct_sub instanceof WC_Subscription && $ct_has_pmpro );
+if ( $ct_is_pmpro_only ) {
+	$ct_pmpro_u      = wp_get_current_user();
+	$ct_pmpro_source = (string) get_user_meta( $ct_pmpro_u->ID, 'ct_membership_source', true );
+	$ct_pmpro_labels = array(
+		'plug_and_pay' => 'Plug&Pay',
+		'Gratis'       => 'Gratis',
+		'woocommerce'  => 'WooCommerce',
+	);
+	$ct_pmpro_betaling = isset( $ct_pmpro_labels[ $ct_pmpro_source ] ) ? $ct_pmpro_labels[ $ct_pmpro_source ] : '';
+	$ct_pmpro_phone    = '';
+	foreach ( array( 'billing_phone', 'phone', 'telefoon' ) as $ct_pmpro_pk ) {
+		$ct_pmpro_pv = get_user_meta( $ct_pmpro_u->ID, $ct_pmpro_pk, true );
+		if ( is_string( $ct_pmpro_pv ) && '' !== trim( $ct_pmpro_pv ) ) {
+			$ct_pmpro_phone = trim( $ct_pmpro_pv );
+			break;
+		}
+	}
+	$ct_pmpro_name   = $ct_pmpro_u->display_name ? $ct_pmpro_u->display_name : $ct_pmpro_u->user_login;
+	$ct_pmpro_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'dashboard' ) : '';
+}
 ?>
 <section class="ct-account-subscription ct-account-subscription--ref" aria-labelledby="ct-account-subscription-title">
 	<div class="ct-subscription-panel">
@@ -262,36 +284,55 @@ $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 							<span class="ct-account-subscription__btn-arrow" aria-hidden="true"><?php echo function_exists( 'coachtribe_my_account_subscription_icon_svg' ) ? coachtribe_my_account_subscription_icon_svg( 'arrow-right' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						</a>
 					</div>
-			<?php elseif ( ! $ct_sub instanceof WC_Subscription && $ct_has_pmpro ) : ?>
-					<table class="ct-subscription-info ct-subscription-info--pmpro" style="border:none;border-collapse:collapse;background:transparent;box-shadow:none;width:auto;margin:0;">
-						<tr style="background:transparent;">
-							<td style="border:none;background:transparent;padding:8px 0;color:#9ca3af;font-size:15px;"><?php esc_html_e( 'Status', 'coachtribe-my-account' ); ?></td>
-							<td style="border:none;background:transparent;padding:8px 18px;color:#9ca3af;"></td>
-							<td style="border:none;background:transparent;padding:8px 0;">
-								<span style="display:inline-block;color:#3fb950;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.4);border-radius:999px;padding:4px 16px;font-weight:600;font-size:14px;line-height:1;"><?php esc_html_e( 'Actief', 'coachtribe-my-account' ); ?></span>
-							</td>
-						</tr>
-						<tr style="background:transparent;">
-							<td style="border:none;background:transparent;padding:8px 0;color:#9ca3af;font-size:15px;"><?php esc_html_e( 'Abonnement', 'coachtribe-my-account' ); ?></td>
-							<td style="border:none;background:transparent;padding:8px 18px;color:#9ca3af;">:</td>
-							<td style="border:none;background:transparent;padding:8px 0;color:#ffffff;font-weight:700;font-size:15px;"><?php echo esc_html( $ct_pmpro->name ); ?></td>
-						</tr>
-						<?php
-						$ct_source = (string) get_user_meta( get_current_user_id(), 'ct_membership_source', true );
-						$ct_source_labels = array(
-							'plug_and_pay'  => 'Plug&Pay',
-							'Gratis' => 'Gratis',
-							'woocommerce'   => 'WooCommerce',
-						);
-						if ( isset( $ct_source_labels[ $ct_source ] ) ) :
-						?>
-						<tr style="background:transparent;">
-							<td style="border:none;background:transparent;padding:8px 0;color:#9ca3af;font-size:15px;"><?php esc_html_e( 'Betaling via', 'coachtribe-my-account' ); ?></td>
-							<td style="border:none;background:transparent;padding:8px 18px;color:#9ca3af;">:</td>
-							<td style="border:none;background:transparent;padding:8px 0;color:#ffffff;font-weight:700;font-size:15px;"><?php echo esc_html( $ct_source_labels[ $ct_source ] ); ?></td>
-						</tr>
-						<?php endif; ?>
-					</table>
+
+				<?php elseif ( $ct_is_pmpro_only ) : ?>
+					<form class="ct-account-profile-edit-form ct-subscription-pmpro-form" id="ct-account-profile-edit-form" method="post" action="<?php echo esc_url( $ct_pmpro_action ); ?>" autocomplete="on">
+						<?php wp_nonce_field( 'coachtribe_profile_edit', 'coachtribe_profile_edit_nonce' ); ?>
+						<input type="hidden" name="ct_profile_display_name" value="<?php echo esc_attr( $ct_pmpro_u->display_name ); ?>" />
+						<input type="hidden" name="ct_profile_phone" value="<?php echo esc_attr( $ct_pmpro_phone ); ?>" />
+
+						<div class="ct-subscription-info ct-subscription-info--ref-grid">
+							<div class="ct-info-row">
+								<span class="ct-label"><?php esc_html_e( 'Status', 'coachtribe-my-account' ); ?></span>
+								<span class="ct-info-sep" aria-hidden="true">:</span>
+								<span class="ct-value"><span class="ct-account-sub__badge ct-account-sub__badge--active"><?php esc_html_e( 'Actief', 'coachtribe-my-account' ); ?></span></span>
+							</div>
+							<div class="ct-info-row">
+								<span class="ct-label"><?php esc_html_e( 'Abonnement', 'coachtribe-my-account' ); ?></span>
+								<span class="ct-info-sep" aria-hidden="true">:</span>
+								<span class="ct-value"><?php echo esc_html( $ct_pmpro->name ); ?></span>
+							</div>
+							<div class="ct-info-row">
+								<span class="ct-label"><?php esc_html_e( 'Gebruikersnaam', 'coachtribe-my-account' ); ?></span>
+								<span class="ct-info-sep" aria-hidden="true">:</span>
+								<span class="ct-value">
+									<?php echo esc_html( $ct_pmpro_name ); ?>
+									<small class="ct-value__hint"><?php esc_html_e( '(kan niet worden gewijzigd)', 'coachtribe-my-account' ); ?></small>
+								</span>
+							</div>
+							<div class="ct-info-row">
+								<span class="ct-label"><?php esc_html_e( 'E-mailadres', 'coachtribe-my-account' ); ?></span>
+								<span class="ct-info-sep" aria-hidden="true">:</span>
+								<span class="ct-value">
+									<input type="email" class="ct-account-input ct-inline-input" name="ct_profile_email" value="<?php echo esc_attr( $ct_pmpro_u->user_email ); ?>" required inputmode="email" autocomplete="email" />
+								</span>
+							</div>
+							<?php if ( '' !== $ct_pmpro_betaling ) : ?>
+							<div class="ct-info-row">
+								<span class="ct-label"><?php esc_html_e( 'Betaling via', 'coachtribe-my-account' ); ?></span>
+								<span class="ct-info-sep" aria-hidden="true">:</span>
+								<span class="ct-value"><?php echo esc_html( $ct_pmpro_betaling ); ?></span>
+							</div>
+							<?php endif; ?>
+						</div>
+
+						<div class="ct-account-subscription__cta">
+							<button type="submit" name="coachtribe_profile_edit_submit" value="1" class="ct-account-submit-button ct-account-submit-button--saas">
+								<span class="ct-account-submit-button__label"><?php esc_html_e( 'Wijzigingen opslaan', 'coachtribe-my-account' ); ?></span>
+							</button>
+						</div>
+					</form>
+
 				<?php else : ?>
 					<div class="ct-subscription-info ct-subscription-info--ref-grid">
 						<div class="ct-info-row">
@@ -355,6 +396,15 @@ $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 					</div>
 				<?php endif; ?>
 			</div>
+
+			<?php if ( $ct_is_pmpro_only ) : ?>
+			<div class="ct-profile-photo-right">
+				<?php
+				$ct_profile_avatar_layout = 'settings';
+				require $ct_sections_dir . 'profile-avatar-header.php';
+				?>
+			</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </section>

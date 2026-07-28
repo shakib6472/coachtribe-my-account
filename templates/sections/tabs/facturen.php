@@ -101,7 +101,23 @@ $ct_inv_base_url = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_acc
 						$ct_inv_date  = ( $ct_created && function_exists( 'wc_format_datetime' ) ) ? wc_format_datetime( $ct_created, 'd-m-Y' ) : '—';
 						$ct_inv_total = wp_kses_post( $ct_order->get_formatted_order_total() );
 						$ct_inv_stat  = $ct_invoice_status_label( $ct_order );
-						$ct_dl_url    = apply_filters( 'coachtribe_my_account_invoice_download_url', $ct_order->get_view_order_url(), $ct_order );
+						// Direct PDF download via WP Overnight "PDF Invoices & Packing Slips" when active;
+						// otherwise fall back to the order view. A filter can override either way.
+						$ct_dl_url = $ct_order->get_view_order_url();
+						if ( function_exists( 'WPO_WCPDF' ) ) {
+							$ct_dl_url = wp_nonce_url(
+								add_query_arg(
+									array(
+										'action'        => 'generate_wpo_wcpdf',
+										'document_type' => 'invoice',
+										'order_ids'     => $ct_order->get_id(),
+									),
+									admin_url( 'admin-ajax.php' )
+								),
+								'generate_wpo_wcpdf'
+							);
+						}
+						$ct_dl_url = apply_filters( 'coachtribe_my_account_invoice_download_url', $ct_dl_url, $ct_order );
 						?>
 						<tr class="ct-account-invoices-table__row">
 							<td class="ct-account-invoice-number" data-label="<?php esc_attr_e( 'Factuurnummer', 'coachtribe-my-account' ); ?>">
@@ -117,7 +133,7 @@ $ct_inv_base_url = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_acc
 								<span class="ct-account-invoice-status-badge"><?php echo esc_html( $ct_inv_stat ); ?></span>
 							</td>
 							<td class="ct-account-invoice-download" data-label="<?php esc_attr_e( 'Downloaden', 'coachtribe-my-account' ); ?>">
-								<a class="ct-account-invoice-download-link" href="<?php echo esc_url( $ct_dl_url ); ?>">
+								<a class="ct-account-invoice-download-link" href="<?php echo esc_url( $ct_dl_url ); ?>" target="_blank" rel="noopener">
 									<?php esc_html_e( 'Downloaden', 'coachtribe-my-account' ); ?>
 								</a>
 							</td>

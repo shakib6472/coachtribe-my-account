@@ -38,12 +38,14 @@ $ct_is_overzicht       = ( '' === $ct_endpoint || 'dashboard' === $ct_endpoint )
 $ct_is_facturen        = ( 'facturen' === $ct_endpoint );
 $ct_is_instellingen    = ( 'instellingen' === $ct_endpoint );
 $ct_is_factuurgegevens = ( 'factuurgegevens' === $ct_endpoint );
+$ct_is_opzeggen        = ( 'opzeggen' === $ct_endpoint );
 $ct_is_wachtwoord      = ( 'wachtwoord' === $ct_endpoint );
 
 $ct_overzicht_url       = wc_get_account_endpoint_url( 'dashboard' );
 $ct_facturen_url        = wc_get_account_endpoint_url( 'facturen' );
 $ct_instellingen_url    = wc_get_account_endpoint_url( 'instellingen' );
 $ct_factuurgegevens_url = wc_get_account_endpoint_url( 'factuurgegevens' );
+$ct_opzeggen_url        = wc_get_account_endpoint_url( 'opzeggen' );
 $ct_wachtwoord_url      = wc_get_account_endpoint_url( 'wachtwoord' );
 $ct_logout_url          = wc_logout_url( wc_get_page_permalink( 'myaccount' ) );
 
@@ -60,6 +62,8 @@ $ct_facturen_nav_url     = ( $ct_is_plugandpay && '' !== $ct_plugandpay_url ) ? 
 $ct_facturen_is_external = ( $ct_is_plugandpay && '' !== $ct_plugandpay_url );
 // The editable billing-details page is only for WooCommerce members.
 $ct_show_factuurgegevens = $ct_is_wc_member;
+// Free members have no quick cards, so they get a dedicated cancellation tab instead.
+$ct_show_opzeggen_tab = $ct_is_free;
 
 $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 require_once COACHTRIBE_MY_ACCOUNT_PATH . 'templates/partials/sidebar-nav-icons.php';
@@ -104,6 +108,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<option value="dashboard" data-url="<?php echo esc_url( $ct_overzicht_url ); ?>" <?php selected( $ct_tab_slug, 'dashboard' ); ?>><?php esc_html_e( 'Mijn account', 'coachtribe-my-account' ); ?></option>
 				<?php if ( $ct_is_wc_member ) : ?><option value="facturen" data-url="<?php echo esc_url( $ct_facturen_url ); ?>" <?php selected( $ct_tab_slug, 'facturen' ); ?>><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></option>
 				<option value="factuurgegevens" data-url="<?php echo esc_url( $ct_factuurgegevens_url ); ?>" <?php selected( $ct_tab_slug, 'factuurgegevens' ); ?>><?php esc_html_e( 'Factuurgegevens', 'coachtribe-my-account' ); ?></option><?php endif; ?>
+				<?php if ( $ct_show_opzeggen_tab ) : ?>
+					<option value="opzeggen" data-url="<?php echo esc_url( $ct_opzeggen_url ); ?>" <?php selected( $ct_tab_slug, 'opzeggen' ); ?>><?php esc_html_e( 'Abonnement opzeggen', 'coachtribe-my-account' ); ?></option>
+				<?php endif; ?>
 				<option value="wachtwoord" data-url="<?php echo esc_url( $ct_wachtwoord_url ); ?>" <?php selected( $ct_tab_slug, 'wachtwoord' ); ?>><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></option>
 			</select>
 		</div>
@@ -167,7 +174,24 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></span>
 					</a>
 				</li>
-				<li class="ct-account-sidebar__item ct-account-sidebar__item--logout">
+				<?php if ( $ct_show_opzeggen_tab ) : ?>
+					<li class="ct-account-sidebar__item">
+						<a
+							class="ct-account-sidebar__link ct-account-tab<?php echo $ct_is_opzeggen ? ' is-active' : ''; ?>"
+							href="<?php echo esc_url( $ct_opzeggen_url ); ?>"
+							data-ct-tab="opzeggen"
+						>
+							<span class="ct-account-sidebar__icon" aria-hidden="true">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+									<path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M20 9a8 8 0 00-14.9-3M4 15a8 8 0 0014.9 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</span>
+							<span class="ct-account-sidebar__label"><?php esc_html_e( 'Abonnement opzeggen', 'coachtribe-my-account' ); ?></span>
+						</a>
+					</li>
+					<?php endif; ?>
+					<li class="ct-account-sidebar__item ct-account-sidebar__item--logout">
 					<a class="ct-account-sidebar__link ct-account-sidebar__link--logout" href="<?php echo esc_url( $ct_logout_url ); ?>">
 						<span class="ct-account-sidebar__icon" aria-hidden="true"><?php echo coachtribe_my_account_sidebar_nav_icon( 'logout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<span class="ct-account-sidebar__label"><?php esc_html_e( 'Uitloggen', 'coachtribe-my-account' ); ?></span>
@@ -201,6 +225,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<?php elseif ( $ct_is_wachtwoord ) : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Wijzig je wachtwoord of stel een nieuw wachtwoord in.', 'coachtribe-my-account' ); ?></p>
+				<?php elseif ( $ct_is_opzeggen ) : ?>
+					<h1 class="ct-account-header__title"><?php esc_html_e( 'Abonnement opzeggen', 'coachtribe-my-account' ); ?></h1>
+					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Hier kun je je abonnement beëindigen. Je behoudt toegang tot het einde van je huidige betaalperiode.', 'coachtribe-my-account' ); ?></p>
 				<?php else : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Account', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Beheer je accountgegevens.', 'coachtribe-my-account' ); ?></p>
@@ -272,6 +299,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 								break;
 							case 'factuurgegevens':
 								do_action( 'woocommerce_account_factuurgegevens_endpoint' );
+								break;
+							case 'opzeggen':
+								do_action( 'woocommerce_account_opzeggen_endpoint' );
 								break;
 							case 'wachtwoord':
 								do_action( 'woocommerce_account_wachtwoord_endpoint' );

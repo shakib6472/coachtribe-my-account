@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.0' );
+define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.1' );
 define( 'COACHTRIBE_MY_ACCOUNT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'COACHTRIBE_MY_ACCOUNT_URL', plugin_dir_url( __FILE__ ) );
 
@@ -150,6 +150,7 @@ function coachtribe_my_account_register_endpoints() {
 	add_rewrite_endpoint( 'wachtwoord', EP_ROOT | EP_PAGES );
 	add_rewrite_endpoint( 'instellingen', EP_ROOT | EP_PAGES );
 	add_rewrite_endpoint( 'factuurgegevens', EP_ROOT | EP_PAGES );
+	add_rewrite_endpoint( 'opzeggen', EP_ROOT | EP_PAGES );
 }
 add_action( 'init', 'coachtribe_my_account_register_endpoints', 5 );
 
@@ -178,6 +179,7 @@ function coachtribe_my_account_query_vars( $query_vars ) {
 	$query_vars['wachtwoord']      = 'wachtwoord';
 	$query_vars['instellingen']    = 'instellingen';
 	$query_vars['factuurgegevens'] = 'factuurgegevens';
+	$query_vars['opzeggen']        = 'opzeggen';
 
 	return $query_vars;
 }
@@ -369,6 +371,7 @@ function coachtribe_my_account_register_wc_endpoint_integration() {
 	add_action( 'woocommerce_account_instellingen_endpoint', 'coachtribe_my_account_output_instellingen_endpoint', $priority );
 	add_action( 'woocommerce_account_wachtwoord_endpoint', 'coachtribe_my_account_output_wachtwoord_endpoint', $priority );
 	add_action( 'woocommerce_account_factuurgegevens_endpoint', 'coachtribe_my_account_output_factuurgegevens_endpoint', $priority );
+	add_action( 'woocommerce_account_opzeggen_endpoint', 'coachtribe_my_account_output_opzeggen_endpoint', $priority );
 
 	// WCS registers `view-subscription`; we replace its template, not the rewrite endpoint.
 	add_action( 'woocommerce_account_view-subscription_endpoint', 'coachtribe_my_account_output_view_subscription_endpoint', $priority );
@@ -674,6 +677,20 @@ function coachtribe_my_account_output_factuurgegevens_endpoint() {
 }
 
 /**
+ * @return void
+ */
+function coachtribe_my_account_output_opzeggen_endpoint() {
+	do_action( 'coachtribe_my_account_before_opzeggen' );
+
+	$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/cancellation-request.php';
+	if ( is_readable( $file ) ) {
+		include $file;
+	}
+
+	do_action( 'coachtribe_my_account_after_opzeggen' );
+}
+
+/**
  * Guard My Account endpoints by membership type (server-side, before any output).
  *
  *   - instellingen    : removed from the UI, so send everyone to the dashboard.
@@ -744,11 +761,16 @@ function coachtribe_my_account_guard_account_endpoints() {
  * @return string
  */
 function coachtribe_my_account_cancellation_url() {
-	$url     = '';
+	// Default: the in-plugin cancellation tab (inside the My Account shell).
+	$url = function_exists( 'wc_get_account_endpoint_url' ) ? (string) wc_get_account_endpoint_url( 'opzeggen' ) : '';
+
+	// Optional override: a specific page holding the [coachtribe_cancellation] shortcode.
 	$page_id = (int) get_option( 'coachtribe_cancellation_page_id', 0 );
 	if ( $page_id > 0 ) {
 		$permalink = get_permalink( $page_id );
-		$url       = $permalink ? (string) $permalink : '';
+		if ( $permalink ) {
+			$url = (string) $permalink;
+		}
 	}
 	return (string) apply_filters( 'coachtribe_my_account_cancellation_url', $url );
 }
@@ -1316,7 +1338,7 @@ function coachtribe_my_account_detect_endpoint_from_url() {
 
 	$known = apply_filters(
 		'coachtribe_my_account_detect_url_endpoints',
-		array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens' )
+		array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens', 'opzeggen' )
 	);
 
 	foreach ( $known as $endpoint ) {
@@ -1371,7 +1393,7 @@ function coachtribe_my_account_normalize_tab_slug( $endpoint ) {
 	if ( '' === $endpoint || 'dashboard' === $endpoint ) {
 		return 'dashboard';
 	}
-	$ajax_tabs = array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens' );
+	$ajax_tabs = array( 'facturen', 'instellingen', 'wachtwoord', 'factuurgegevens', 'opzeggen' );
 	if ( in_array( $endpoint, $ajax_tabs, true ) ) {
 		return $endpoint;
 	}
@@ -1406,6 +1428,9 @@ function coachtribe_my_account_render_tab_html( $endpoint ) {
 			break;
 		case 'factuurgegevens':
 			do_action( 'woocommerce_account_factuurgegevens_endpoint' );
+			break;
+		case 'opzeggen':
+			do_action( 'woocommerce_account_opzeggen_endpoint' );
 			break;
 		case 'wachtwoord':
 			do_action( 'woocommerce_account_wachtwoord_endpoint' );
@@ -2739,6 +2764,7 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 			'facturen'        => wc_get_account_endpoint_url( 'facturen' ),
 			'instellingen'    => wc_get_account_endpoint_url( 'instellingen' ),
 			'factuurgegevens' => wc_get_account_endpoint_url( 'factuurgegevens' ),
+			'opzeggen'        => wc_get_account_endpoint_url( 'opzeggen' ),
 			'wachtwoord'      => wc_get_account_endpoint_url( 'wachtwoord' ),
 		);
 	}
@@ -2752,7 +2778,7 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 			'tabAction'        => 'coachtribe_my_account_tab',
 			'endpointUrls'     => $endpoint_urls,
 			'initialTab'       => $initial_tab,
-			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'wachtwoord', 'view-subscription' ),
+			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'opzeggen', 'wachtwoord', 'view-subscription' ),
 			'passwordMismatch' => __( 'Het nieuwe wachtwoord en de bevestiging komen niet overeen.', 'coachtribe-my-account' ),
 			'invalidEmail'              => __( 'Voer een geldig e-mailadres in.', 'coachtribe-my-account' ),
 			'invalidPhone'              => __( 'Voer een geldig telefoonnummer in (alleen cijfers en +, spaties, haakjes of streepjes; minimaal 8 cijfers).', 'coachtribe-my-account' ),
