@@ -12,8 +12,11 @@ defined( 'ABSPATH' ) || exit;
 
 $ct_member_type = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type() : 'woocommerce';
 
-// Free members have no billing/payment actions — only the cancellation card is shown.
-$ct_show_billing_cards = ( 'gratis' !== $ct_member_type );
+// Free members have no quick cards at all; they cancel via the sidebar "Abonnement opzeggen" tab.
+if ( 'gratis' === $ct_member_type ) {
+	return;
+}
+$ct_show_billing_cards = true;
 
 $ct_plugandpay_url = function_exists( 'coachtribe_my_account_plugandpay_url' ) ? coachtribe_my_account_plugandpay_url() : '';
 $ct_quick_external = ( 'plug_and_pay' === $ct_member_type && '' !== $ct_plugandpay_url );

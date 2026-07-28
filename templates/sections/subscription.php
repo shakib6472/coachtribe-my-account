@@ -242,9 +242,12 @@ if ( $ct_sub instanceof WC_Subscription ) {
 
 $ct_sections_dir = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/';
 
-// Plug&Pay / Free members: combined-card data (subscription info + personal details).
-$ct_is_pmpro_only = ( ! $ct_sub instanceof WC_Subscription && $ct_has_pmpro );
-if ( $ct_is_pmpro_only ) {
+// The combined card (subscription info + personal details in one) is only for
+// Plug&Pay / Free members. WooCommerce members always get the abonnement grid
+// plus the separate "Mijn persoonlijke gegevens" card.
+$ct_sub_mtype    = function_exists( 'coachtribe_my_account_get_member_type' ) ? coachtribe_my_account_get_member_type() : 'woocommerce';
+$ct_use_combined = ( ( 'plug_and_pay' === $ct_sub_mtype || 'gratis' === $ct_sub_mtype ) && $ct_has_pmpro );
+if ( $ct_use_combined ) {
 	$ct_pmpro_u      = wp_get_current_user();
 	$ct_pmpro_source = (string) get_user_meta( $ct_pmpro_u->ID, 'ct_membership_source', true );
 	$ct_pmpro_labels = array(
@@ -276,7 +279,7 @@ if ( $ct_is_pmpro_only ) {
 
 		<div class="ct-overview-top ct-overview-top--ref">
 			<div class="ct-subscription-card">
-				<?php if ( ! $ct_sub instanceof WC_Subscription && ! $ct_has_pmpro ) : ?>
+				<?php if ( ! $ct_use_combined && ! $ct_sub instanceof WC_Subscription ) : ?>
 					<div class="ct-account-subscription__empty">
 						<p class="ct-account-subscription__empty-text"><?php esc_html_e( 'Je hebt nog geen actief abonnement.', 'coachtribe-my-account' ); ?></p>
 						<a class="ct-account-subscription__btn ct-account-subscription__btn--primary" href="<?php echo esc_url( $ct_signup_url ); ?>">
@@ -285,7 +288,7 @@ if ( $ct_is_pmpro_only ) {
 						</a>
 					</div>
 
-				<?php elseif ( $ct_is_pmpro_only ) : ?>
+				<?php elseif ( $ct_use_combined ) : ?>
 					<form class="ct-account-profile-edit-form ct-subscription-pmpro-form" id="ct-account-profile-edit-form" method="post" action="<?php echo esc_url( $ct_pmpro_action ); ?>" autocomplete="on">
 						<?php wp_nonce_field( 'coachtribe_profile_edit', 'coachtribe_profile_edit_nonce' ); ?>
 						<input type="hidden" name="ct_profile_display_name" value="<?php echo esc_attr( $ct_pmpro_u->display_name ); ?>" />
@@ -397,7 +400,7 @@ if ( $ct_is_pmpro_only ) {
 				<?php endif; ?>
 			</div>
 
-			<?php if ( $ct_is_pmpro_only ) : ?>
+			<?php if ( $ct_use_combined ) : ?>
 			<div class="ct-profile-photo-right">
 				<?php
 				$ct_profile_avatar_layout = 'settings';

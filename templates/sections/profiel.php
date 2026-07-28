@@ -148,18 +148,21 @@ $ct_profile_form_action = function_exists( 'wc_get_account_endpoint_url' ) ? wc_
 						autocomplete="on"
 					>
 						<?php wp_nonce_field( 'coachtribe_profile_edit', 'coachtribe_profile_edit_nonce' ); ?>
+							<input type="hidden" name="ct_profile_display_name" value="<?php echo esc_attr( $ct_profile_display_input ); ?>" />
 
 						<div class="ct-account-settings-field">
-							<label class="ct-account-settings-field__label" for="ct_profile_display_name"><?php esc_html_e( 'Weergavenaam', 'coachtribe-my-account' ); ?></label>
+							<label class="ct-account-settings-field__label" for="ct_profile_username"><?php esc_html_e( 'Gebruikersnaam', 'coachtribe-my-account' ); ?></label>
 							<input
 								class="ct-account-input"
 								type="text"
 								name="ct_profile_display_name"
-								id="ct_profile_display_name"
+								id="ct_profile_username"
 								value="<?php echo esc_attr( $ct_profile_display_input ); ?>"
 								required
 								maxlength="250"
-								autocomplete="name"
+								readonly
+								aria-readonly="true"
+								tabindex="-1"
 							/>
 						</div>
 
