@@ -31,6 +31,17 @@ if ( $ct_quick_external ) {
 	$ct_quick_betalen    = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'payment-methods' ) : home_url( '/' );
 	$ct_quick_abonnement = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'subscriptions' ) : home_url( '/' );
 
+		// Prefer the subscription's own "change payment method" flow (more relevant than the empty saved-cards page).
+		if ( function_exists( 'coachtribe_my_account_get_active_subscription' ) ) {
+			$ct_sa_sub = coachtribe_my_account_get_active_subscription();
+			if ( $ct_sa_sub instanceof WC_Subscription && is_callable( array( $ct_sa_sub, 'get_change_payment_method_url' ) ) ) {
+				$ct_sa_pm = (string) $ct_sa_sub->get_change_payment_method_url();
+				if ( '' !== $ct_sa_pm ) {
+					$ct_quick_betalen = $ct_sa_pm;
+				}
+			}
+		}
+
 	$ct_quick_facturen   = apply_filters( 'coachtribe_my_account_quick_link_facturen', $ct_quick_facturen );
 	$ct_quick_betalen    = apply_filters( 'coachtribe_my_account_quick_link_payment_methods', $ct_quick_betalen );
 	$ct_quick_abonnement = apply_filters( 'coachtribe_my_account_quick_link_subscriptions', $ct_quick_abonnement );

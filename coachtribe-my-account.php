@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.2' );
+define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.6' );
 define( 'COACHTRIBE_MY_ACCOUNT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'COACHTRIBE_MY_ACCOUNT_URL', plugin_dir_url( __FILE__ ) );
 
@@ -1455,6 +1455,53 @@ function coachtribe_my_account_render_tab_html( $endpoint ) {
 }
 
 /**
+ * Header title + subtitle for a given account endpoint (used on load and in AJAX tab-switches).
+ *
+ * @param string $endpoint Endpoint slug.
+ * @return array{title:string,subtitle:string}
+ */
+function coachtribe_my_account_header_texts( $endpoint ) {
+	switch ( (string) $endpoint ) {
+		case 'facturen':
+			return array(
+				'title'    => __( 'Facturen', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Bekijk en download je facturen.', 'coachtribe-my-account' ),
+			);
+		case 'factuurgegevens':
+			return array(
+				'title'    => __( 'Factuurgegevens', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Beheer je factuur- en betaalgegevens.', 'coachtribe-my-account' ),
+			);
+		case 'instellingen':
+			return array(
+				'title'    => __( 'Instellingen', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Beheer je abonnement, facturen en accountinstellingen.', 'coachtribe-my-account' ),
+			);
+		case 'wachtwoord':
+			return array(
+				'title'    => __( 'Wachtwoord veranderen', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Wijzig je wachtwoord of stel een nieuw wachtwoord in.', 'coachtribe-my-account' ),
+			);
+		case 'opzeggen':
+			return array(
+				'title'    => __( 'Abonnement opzeggen', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Hier kun je je abonnement beëindigen. Je behoudt toegang tot het einde van je huidige betaalperiode.', 'coachtribe-my-account' ),
+			);
+		case '':
+		case 'dashboard':
+			return array(
+				'title'    => __( 'Mijn account', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Hier beheer je je account en bekijk je je abonnementsgegevens.', 'coachtribe-my-account' ),
+			);
+		default:
+			return array(
+				'title'    => __( 'Account', 'coachtribe-my-account' ),
+				'subtitle' => __( 'Beheer je accountgegevens.', 'coachtribe-my-account' ),
+			);
+	}
+}
+
+/**
  * AJAX: HTML voor een account-tab (ingelogde gebruikers alleen).
  */
 function coachtribe_my_account_ajax_tab() {
@@ -1471,7 +1518,7 @@ function coachtribe_my_account_ajax_tab() {
 	}
 
 	$tab = isset( $_POST['tab'] ) ? sanitize_key( wp_unslash( $_POST['tab'] ) ) : '';
-	$allowed = array( 'dashboard', 'facturen', 'instellingen', 'wachtwoord', 'view-subscription' );
+	$allowed = array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'opzeggen', 'wachtwoord', 'view-subscription' );
 
 	if ( ! in_array( $tab, $allowed, true ) ) {
 		wp_send_json_error( array( 'message' => __( 'Onbekend tabblad.', 'coachtribe-my-account' ) ), 400 );
@@ -1492,10 +1539,14 @@ function coachtribe_my_account_ajax_tab() {
 		unset( $GLOBALS['coachtribe_my_account_ajax_subscription_id'] );
 	}
 
+	$ct_header = coachtribe_my_account_header_texts( $tab );
+
 	wp_send_json_success(
 		array(
-			'html' => $html,
-			'tab'  => $tab,
+			'html'     => $html,
+			'tab'      => $tab,
+			'title'    => $ct_header['title'],
+			'subtitle' => $ct_header['subtitle'],
 		)
 	);
 }
@@ -2778,7 +2829,7 @@ function coachtribe_my_account_enqueue_front_assets( $initial_tab ) {
 			'tabAction'        => 'coachtribe_my_account_tab',
 			'endpointUrls'     => $endpoint_urls,
 			'initialTab'       => $initial_tab,
-			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'opzeggen', 'wachtwoord', 'view-subscription' ),
+			'ajaxTabs'         => array( 'dashboard', 'facturen', 'instellingen', 'factuurgegevens', 'wachtwoord', 'view-subscription' ),
 			'passwordMismatch' => __( 'Het nieuwe wachtwoord en de bevestiging komen niet overeen.', 'coachtribe-my-account' ),
 			'invalidEmail'              => __( 'Voer een geldig e-mailadres in.', 'coachtribe-my-account' ),
 			'invalidPhone'              => __( 'Voer een geldig telefoonnummer in (alleen cijfers en +, spaties, haakjes of streepjes; minimaal 8 cijfers).', 'coachtribe-my-account' ),

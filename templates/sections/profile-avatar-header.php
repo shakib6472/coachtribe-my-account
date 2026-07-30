@@ -75,11 +75,9 @@ $ct_file_input_id = $ct_is_settings ? 'ct-profile-image-file-settings' : 'ct-pro
 					decoding="async"
 					data-ct-profile-img
 				/>
-			<?php elseif ( $ct_is_settings ) : ?>
-				<span class="ct-account-profile-image__initial" aria-hidden="true"><?php echo esc_html( $ct_prof_initial ); ?></span>
 			<?php else : ?>
 				<div class="ct-account-profile-image__fallback">
-					<?php echo $ct_avatar_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress core avatar markup ?>
+					<?php echo $ct_avatar_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress core avatar markup (One User Avatar / Gravatar) ?>
 				</div>
 			<?php endif; ?>
 		</div>

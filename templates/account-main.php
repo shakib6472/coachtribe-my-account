@@ -222,6 +222,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<?php elseif ( $ct_is_facturen ) : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Facturen', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Bekijk en download je facturen.', 'coachtribe-my-account' ); ?></p>
+				<?php elseif ( $ct_is_factuurgegevens ) : ?>
+					<h1 class="ct-account-header__title"><?php esc_html_e( 'Factuurgegevens', 'coachtribe-my-account' ); ?></h1>
+					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Beheer je factuur- en betaalgegevens.', 'coachtribe-my-account' ); ?></p>
 				<?php elseif ( $ct_is_wachtwoord ) : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Wachtwoord veranderen', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Wijzig je wachtwoord of stel een nieuw wachtwoord in.', 'coachtribe-my-account' ); ?></p>
@@ -233,7 +236,7 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Beheer je accountgegevens.', 'coachtribe-my-account' ); ?></p>
 				<?php endif; ?>
 			</div>
-			<?php if ( ! $ct_is_overzicht ) : ?>
+			<?php if ( is_user_logged_in() ) : ?>
 			<div class="ct-account-header__meta">
 				<button type="button" class="ct-account-header__bell" aria-label="<?php esc_attr_e( 'Meldingen', 'coachtribe-my-account' ); ?>">
 					<span class="ct-account-header__bell-icon dashicons dashicons-bell" aria-hidden="true"></span>

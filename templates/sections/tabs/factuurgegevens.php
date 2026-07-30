@@ -90,20 +90,8 @@ if ( function_exists( 'WC' ) && WC()->countries ) {
 						<label class="ct-account-settings-field__label" for="ct_fg_city"><?php esc_html_e( 'Plaats', 'coachtribe-my-account' ); ?></label>
 						<input class="ct-account-input" type="text" id="ct_fg_city" name="billing_city" value="<?php echo esc_attr( $ct_fg['billing_city'] ); ?>" autocomplete="address-level2" />
 					</div>
-					<div class="ct-account-settings-field">
-						<label class="ct-account-settings-field__label" for="ct_fg_country"><?php esc_html_e( 'Land', 'coachtribe-my-account' ); ?></label>
-						<?php if ( ! empty( $ct_fg_countries ) ) : ?>
-						<select class="ct-account-input" id="ct_fg_country" name="billing_country" autocomplete="country">
-							<option value=""><?php esc_html_e( '— Selecteer land —', 'coachtribe-my-account' ); ?></option>
-							<?php foreach ( $ct_fg_countries as $ct_fg_code => $ct_fg_label ) : ?>
-								<option value="<?php echo esc_attr( $ct_fg_code ); ?>" <?php selected( $ct_fg['billing_country'], $ct_fg_code ); ?>><?php echo esc_html( $ct_fg_label ); ?></option>
-							<?php endforeach; ?>
-						</select>
-						<?php else : ?>
-						<input class="ct-account-input" type="text" id="ct_fg_country" name="billing_country" value="<?php echo esc_attr( $ct_fg['billing_country'] ); ?>" autocomplete="country" />
-						<?php endif; ?>
-					</div>
 				</div>
+				<input type="hidden" name="billing_country" value="<?php echo esc_attr( $ct_fg['billing_country'] ); ?>" />
 			</div>
 		</article>
 

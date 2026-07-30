@@ -111,6 +111,18 @@ if ( $ct_sub instanceof WC_Subscription ) {
 		$ct_plan_name = __( 'Abonnement', 'coachtribe-my-account' );
 	}
 
+	// Membership tier (Premium / VIP) from the PMPro level name, used for "Soort abonnement".
+	$ct_membership_tier = $ct_plan_name;
+	if ( $ct_has_pmpro && ! empty( $ct_pmpro->name ) ) {
+		if ( false !== stripos( (string) $ct_pmpro->name, 'VIP' ) ) {
+			$ct_membership_tier = 'VIP';
+		} elseif ( false !== stripos( (string) $ct_pmpro->name, 'Premium' ) ) {
+			$ct_membership_tier = 'Premium';
+		} else {
+			$ct_membership_tier = (string) $ct_pmpro->name;
+		}
+	}
+
 	$ct_billing_period   = $ct_sub->get_billing_period();
 	$ct_billing_interval = max( 1, (int) $ct_sub->get_billing_interval() );
 
@@ -198,9 +210,10 @@ if ( $ct_sub instanceof WC_Subscription ) {
 	}
 
 	$ct_is_pro = coachtribe_my_account_subscription_is_pro_plan( $ct_sub, $ct_plan_name );
+	// Hide the upgrade button for VIP members (already top tier); show it for Premium and others.
 	$ct_show_upgrade_to_pro = (bool) apply_filters(
 		'coachtribe_my_account_show_upgrade_to_pro',
-		( $ct_sub_is_active && ! $ct_is_pro ),
+		( $ct_sub_is_active && 'VIP' !== $ct_membership_tier ),
 		$ct_sub,
 		$ct_plan_name
 	);
@@ -341,7 +354,7 @@ if ( $ct_use_combined ) {
 						<div class="ct-info-row">
 							<span class="ct-label"><?php esc_html_e( 'Soort abonnement', 'coachtribe-my-account' ); ?></span>
 							<span class="ct-info-sep" aria-hidden="true">:</span>
-							<span class="ct-value"><?php echo esc_html( $ct_billing_type_label ); ?></span>
+							<span class="ct-value"><?php echo esc_html( $ct_membership_tier ); ?></span>
 						</div>
 						<div class="ct-info-row">
 							<span class="ct-label"><?php esc_html_e( 'Status', 'coachtribe-my-account' ); ?></span>
@@ -394,7 +407,7 @@ if ( $ct_use_combined ) {
 							<span class="ct-account-upgrade-btn__star-ring" aria-hidden="true">
 								<?php echo function_exists( 'coachtribe_my_account_subscription_icon_svg' ) ? coachtribe_my_account_subscription_icon_svg( 'star' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							</span>
-							<span class="ct-account-upgrade-btn__label"><?php esc_html_e( 'Upgrade naar Premium', 'coachtribe-my-account' ); ?></span>
+							<span class="ct-account-upgrade-btn__label"><?php esc_html_e( 'Upgrade naar VIP', 'coachtribe-my-account' ); ?></span>
 						</a>
 					</div>
 				<?php endif; ?>

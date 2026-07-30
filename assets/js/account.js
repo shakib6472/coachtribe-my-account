@@ -293,6 +293,18 @@
 						initProfileFormPanel(wrap);
 					});
 					syncTablistUI(root, tab);
+					if (json.data.title) {
+						var ctHT = root.querySelector('.ct-account-header__title');
+						if (ctHT) {
+							ctHT.textContent = json.data.title;
+						}
+					}
+					if (typeof json.data.subtitle === 'string') {
+						var ctHS = root.querySelector('.ct-account-header__subtitle');
+						if (ctHS) {
+							ctHS.textContent = json.data.subtitle;
+						}
+					}
 					if (!skipHistory) {
 						pushHistory(tab, opts);
 					}
@@ -361,6 +373,14 @@
 				var v = sel.value;
 				if (!v) {
 					return;
+				}
+				if (!isAjaxTab(v)) {
+					var opt = sel.options[sel.selectedIndex];
+					var url = opt ? opt.getAttribute('data-url') : '';
+					if (url) {
+						window.location.href = url;
+						return;
+					}
 				}
 				showTab(v, { skipHistory: false });
 			});
