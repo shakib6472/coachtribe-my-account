@@ -6339,3 +6339,174 @@ body.coachtribe-my-account-shell .ct-account .ct-account-submit-button--ref-save
 .ct-account .ct-account-settings-center--saas .ct-account-settings-field {
 	margin-bottom: 0.35rem;
 }
+
+/* -------------------------------------------------------------------------
+   Betaalmethode wijzigen: "Jouw abonnement" summary + WooCommerce payment form
+   ------------------------------------------------------------------------- */
+.ct-account .ct-payment-summary {
+	max-width: 960px;
+	background: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 14px;
+	padding: 22px 24px;
+	margin: 0 0 1.5rem;
+}
+
+.ct-account .ct-payment-summary__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.ct-account .ct-payment-summary__icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--ct-color-accent);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+}
+
+.ct-account .ct-payment-summary__title {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--ct-color-text);
+}
+
+.ct-account .ct-payment-summary__grid {
+	margin: 0;
+}
+
+.ct-account .ct-payment-summary__row {
+	display: grid;
+	grid-template-columns: minmax(140px, 220px) 1fr;
+	gap: 1rem;
+	padding: 11px 0;
+	border-bottom: 1px solid var(--ct-color-border);
+}
+
+.ct-account .ct-payment-summary__row:last-child {
+	border-bottom: none;
+}
+
+.ct-account .ct-payment-summary__label {
+	margin: 0;
+	color: var(--ct-color-text-muted);
+	font-size: 14px;
+}
+
+.ct-account .ct-payment-summary__value {
+	margin: 0;
+	color: var(--ct-color-text);
+	font-weight: 700;
+	font-size: 14px;
+}
+
+.ct-account .ct-payment-summary__badge {
+	display: inline-block;
+	color: var(--ct-color-text-muted);
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 999px;
+	padding: 3px 14px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.ct-account .ct-payment-summary__badge--active {
+	color: #3fb950;
+	background: rgba(63, 185, 80, 0.12);
+	border-color: rgba(63, 185, 80, 0.4);
+}
+
+/* Best-effort theming of the plugin-controlled payment form (structure stays gateway-driven) */
+.ct-account .woocommerce-MyAccount-paymentMethods {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 12px;
+	overflow: hidden;
+	color: var(--ct-color-text);
+	margin-bottom: 1.25rem;
+}
+
+.ct-account .woocommerce-MyAccount-paymentMethods th,
+.ct-account .woocommerce-MyAccount-paymentMethods td {
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--ct-color-border);
+	color: var(--ct-color-text);
+	background: transparent;
+}
+
+.ct-account form#add_payment_method,
+.ct-account .woocommerce-Payment {
+	color: var(--ct-color-text);
+}
+
+.ct-account #add_payment_method .payment_methods li,
+.ct-account .woocommerce-PaymentMethods li {
+	list-style: none;
+	background: var(--ct-bg-card);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 10px;
+	padding: 12px 14px;
+	margin-bottom: 10px;
+}
+
+.ct-account #add_payment_method .payment_box,
+.ct-account .woocommerce .payment_box {
+	background: var(--ct-bg-input);
+	border-radius: 8px;
+	color: var(--ct-color-text-muted);
+}
+
+.ct-account form#add_payment_method input,
+.ct-account form#add_payment_method select,
+.ct-account .wc-payment-form input,
+.ct-account .payment_box input {
+	background: var(--ct-bg-input);
+	color: var(--ct-color-text);
+	border: 1px solid var(--ct-color-border);
+	border-radius: 8px;
+	padding: 10px 12px;
+}
+
+.ct-account #add_payment_method button,
+.ct-account .woocommerce #payment #place_order,
+.ct-account .woocommerce a.button.alt,
+.ct-account .woocommerce button.button.alt {
+	background: var(--ct-color-accent);
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 12px 22px;
+	font-weight: 700;
+}
+
+/* WooCommerce notices (e.g. "Geen opgeslagen methodes gevonden") in the dark theme */
+.ct-account .woocommerce-info,
+.ct-account .woocommerce-message,
+.ct-account .woocommerce-Message,
+.ct-account .woocommerce-notice,
+.ct-account .woocommerce-noreviews {
+	background: var(--ct-bg-card) !important;
+	color: var(--ct-color-text) !important;
+	border-top: 3px solid var(--ct-color-accent) !important;
+	border-radius: 8px;
+	box-shadow: none !important;
+}
+
+.ct-account .woocommerce-info::before,
+.ct-account .woocommerce-message::before {
+	color: var(--ct-color-accent) !important;
+}
+
+.ct-account .woocommerce-info a,
+.ct-account .woocommerce-message a {
+	color: var(--ct-color-accent);
+}

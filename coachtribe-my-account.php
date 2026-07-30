@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.6' );
+define( 'COACHTRIBE_MY_ACCOUNT_VERSION', '2.1.8' );
 define( 'COACHTRIBE_MY_ACCOUNT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'COACHTRIBE_MY_ACCOUNT_URL', plugin_dir_url( __FILE__ ) );
 
@@ -689,6 +689,27 @@ function coachtribe_my_account_output_opzeggen_endpoint() {
 
 	do_action( 'coachtribe_my_account_after_opzeggen' );
 }
+
+/**
+ * Prepend a "Jouw abonnement" summary card above the WooCommerce payment-methods page,
+ * so the "Betaalmethode wijzigen" screen matches the CoachTribe design. The payment form
+ * itself stays plugin-controlled (we only style it as close as the gateway allows).
+ *
+ * @return void
+ */
+function coachtribe_my_account_payment_methods_summary() {
+	$sub = function_exists( 'coachtribe_my_account_get_active_subscription' ) ? coachtribe_my_account_get_active_subscription() : null;
+	if ( ! $sub instanceof WC_Subscription ) {
+		return;
+	}
+	$file = COACHTRIBE_MY_ACCOUNT_PATH . 'templates/sections/payment-summary.php';
+	if ( is_readable( $file ) ) {
+		$GLOBALS['coachtribe_payment_summary_sub'] = $sub;
+		include $file;
+		unset( $GLOBALS['coachtribe_payment_summary_sub'] );
+	}
+}
+add_action( 'woocommerce_account_payment-methods_endpoint', 'coachtribe_my_account_payment_methods_summary', 5 );
 
 /**
  * Guard My Account endpoints by membership type (server-side, before any output).

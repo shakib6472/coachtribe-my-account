@@ -39,6 +39,7 @@ $ct_is_facturen        = ( 'facturen' === $ct_endpoint );
 $ct_is_instellingen    = ( 'instellingen' === $ct_endpoint );
 $ct_is_factuurgegevens = ( 'factuurgegevens' === $ct_endpoint );
 $ct_is_opzeggen        = ( 'opzeggen' === $ct_endpoint );
+$ct_is_betaalmethode   = ( 'payment-methods' === $ct_endpoint );
 $ct_is_wachtwoord      = ( 'wachtwoord' === $ct_endpoint );
 
 $ct_overzicht_url       = wc_get_account_endpoint_url( 'dashboard' );
@@ -231,6 +232,9 @@ $ct_tab_panel_id = 'wc-default' === $ct_tab_slug ? 'ct-tab-panel-wc-default' : '
 				<?php elseif ( $ct_is_opzeggen ) : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Abonnement opzeggen', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Hier kun je je abonnement beëindigen. Je behoudt toegang tot het einde van je huidige betaalperiode.', 'coachtribe-my-account' ); ?></p>
+				<?php elseif ( $ct_is_betaalmethode ) : ?>
+					<h1 class="ct-account-header__title"><?php esc_html_e( 'Betaalmethode wijzigen', 'coachtribe-my-account' ); ?></h1>
+					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Werk je betaalgegevens bij.', 'coachtribe-my-account' ); ?></p>
 				<?php else : ?>
 					<h1 class="ct-account-header__title"><?php esc_html_e( 'Account', 'coachtribe-my-account' ); ?></h1>
 					<p class="ct-account-header__subtitle"><?php esc_html_e( 'Beheer je accountgegevens.', 'coachtribe-my-account' ); ?></p>
